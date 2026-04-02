@@ -1,0 +1,60 @@
+{
+    "admin": {
+        "email": "amulbabariya07@gmail.com",
+        "password": "AmulBabariya@121"
+    },
+    "profile": {
+        "name": "Amul Babariya",
+        "title": "Freelance UI/UX Designer and Developer",
+        "bio": "I'm Amul Babariya, Indian based web designer and front‑end developer living in Ahmedabad , Gujrat focused on crafting clean, creative and user‑friendly experiences, I build beautiful and powerful websites and android applications.",
+        "birthdate": "May 2004",
+        "nationality": "Indian",
+        "experience": "3 years",
+        "phone": "+91 8320269460",
+        "address": "Ahmedabad , Gujrat",
+        "email": "amulbabariya07@gmail.com"
+    },
+    "stats": {
+        "experience": "3",
+        "projects": "56",
+        "customers": "89"
+    },
+    "skills": [
+        {
+            "name": "HTML",
+            "level": "80"
+        },
+        {
+            "name": "JAVASCRIPT",
+            "level": "70"
+        },
+        {
+            "name": "CSSS",
+            "level": "60"
+        },
+        {
+            "name": "PHP",
+            "level": "57"
+        },
+        {
+            "name": "WORDPRESS",
+            "level": "90"
+        },
+        {
+            "name": "DRUPAL",
+            "level": "80"
+        },
+        {
+            "name": "REACT",
+            "level": "50"
+        },
+        {
+            "name": "Babariyaaa",
+            "level": "00"
+        },
+        {
+            "name": "Python",
+            "level": "55"
+        }
+    ]
+}
