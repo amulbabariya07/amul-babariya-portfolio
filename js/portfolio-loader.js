@@ -1,17 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const loadPortfolioData = async () => {
         try {
-            let data = null;
-            try {
-                const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
-                if (!response.ok) throw new Error("Firebase fetch failed");
-                data = await response.json();
-                console.log("Portfolio: Loaded LIVE from Firebase");
-            } catch (err) {
-                console.warn("Failed to load from Firebase, falling back to local file:", err);
-                const response = await fetch('data.json');
-                data = await response.json();
-            }
+            const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
+            if (!response.ok) throw new Error("Firebase fetch failed");
+            const data = await response.json();
+            console.log("Portfolio: Loaded LIVE from Firebase");
 
             if (data && data.profile) {
                 const profile = data.profile;
@@ -166,16 +159,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
 
-                // Render Languages
+                // Render Languages (Glass Dark Design)
                 const langContainer = document.getElementById('languages-container');
                 if (langContainer && data.languages) {
                     langContainer.innerHTML = '';
                     data.languages.forEach(lang => {
                         const langHtml = `
-                            <div class="col-12 col-md-4 mb-4">
-                                <div class="language-item text-center">
-                                    <h5 class="mb-1">${lang.name}</h5>
-                                    <span class="text-uppercase" style="font-size: 14px; color: var(--main-color);">${lang.level}</span>
+                            <div class="col-12 col-md-4">
+                                <div class="language-card-pro">
+                                    <div class="lang-header-pro">
+                                        <div class="lang-icon-pro">
+                                            <i class="fa fa-language"></i>
+                                        </div>
+                                        <div class="lang-info-pro">
+                                            <h5>${lang.name}</h5>
+                                            <span>${lang.level}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         `;

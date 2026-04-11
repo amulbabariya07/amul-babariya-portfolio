@@ -2172,3 +2172,55 @@ body.video .videobg {
 }
 
 /* End of file */
+
+/* Languages Section - Glass Dark Design */
+.language-card-pro {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 4px solid #ff4d05; /* Skill matching orange */
+    padding: 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.language-card-pro:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(5px);
+}
+
+.lang-header-pro {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lang-icon-pro {
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 77, 5, 0.1);
+    color: #ff4d05;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.lang-info-pro h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.lang-info-pro span {
+    font-size: 0.75rem;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+
+

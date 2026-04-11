@@ -42,19 +42,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 section.classList.remove('active');
                 if (section.id === viewId) {
                     section.classList.add('active');
-                    if (currentSectionName) currentSectionName.innerText = link.innerText.trim();
+                    if (currentSectionName) {
+                        // Clone the node and remove the badge/icons for a clean title
+                        const tempDiv = link.cloneNode(true);
+                        const badge = tempDiv.querySelector('.badge');
+                        const icon = tempDiv.querySelector('i');
+                        if(badge) badge.remove();
+                        if(icon) icon.remove();
+                        currentSectionName.innerText = tempDiv.innerText.trim();
+                    }
                 }
             });
         });
     });
 
     let adminData = null;
-    let localFileHandle = null;
     let hasUnsavedChanges = false;
 
     // --- Safety Feature ---
     window.onbeforeunload = (e) => {
-        if (hasUnsavedChanges) return "You have unsaved changes! Your data.json will NOT be updated if you leave now.";
+        if (hasUnsavedChanges) return "You have unsaved changes! Your updates will not be live if you leave without saving.";
     };
 
     const markUnsaved = () => {
@@ -173,6 +180,134 @@ document.addEventListener('DOMContentLoaded', function () {
                 eduList.appendChild(item);
             });
         }
+        renderLanguages();
+        renderMessages();
+    };
+
+    const renderLanguages = () => {
+        const langList = document.getElementById('languages-list');
+        if (!langList || !adminData.languages) return;
+        
+        langList.innerHTML = '';
+        adminData.languages.forEach((lang, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4';
+            col.innerHTML = `
+                <div class="card border-0 shadow-sm rounded-4 p-3 position-relative">
+                    <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 border-0" onclick="rmLang(${index})"><i class="fa fa-trash"></i></button>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Language</label>
+                        <input type="text" class="form-control" value="${lang.name}" oninput="updateLang(${index}, 'name', this.value)">
+                    </div>
+                    <div>
+                        <label class="form-label small fw-bold text-muted">Level (e.g. Fluent, Native)</label>
+                        <input type="text" class="form-control" value="${lang.level}" oninput="updateLang(${index}, 'level', this.value)">
+                    </div>
+                </div>`;
+            langList.appendChild(col);
+        });
+    };
+
+    window.updateLang = (i, f, v) => { adminData.languages[i][f] = v; markUnsaved(); };
+    window.rmLang = (i) => { adminData.languages.splice(i, 1); markUnsaved(); renderEverything(); };
+    const addLangBtn = document.getElementById('add-lang-btn');
+    if (addLangBtn) addLangBtn.onclick = () => {
+        if (!adminData.languages) adminData.languages = [];
+        adminData.languages.push({ name: 'New Language', level: 'Fluent' });
+        markUnsaved(); renderEverything();
+    };
+
+    const renderMessages = () => {
+        const msgs = adminData.messages || {};
+        
+        // Reset counts and columns
+        document.getElementById('col-draft').innerHTML = '';
+        document.getElementById('col-read').innerHTML = '';
+        document.getElementById('col-deal').innerHTML = '';
+        document.getElementById('messages-table-body').innerHTML = '';
+        let cntDraft = 0, cntRead = 0, cntDeal = 0;
+
+        Object.keys(msgs).forEach(key => {
+            const m = msgs[key];
+            const date = new Date(m.timestamp).toLocaleDateString();
+            const stage = m.stage || "Draft";
+
+            // Kanban Card
+            const card = document.createElement('div');
+            card.className = "card border-0 shadow-sm rounded-3 p-3 mb-3";
+            card.innerHTML = `
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="badge bg-light text-dark border">${date}</span>
+                    <select class="form-select form-select-sm w-auto border-0 bg-light" onchange="updateMsgStage('${key}', this.value)">
+                        <option value="Draft" ${stage==='Draft'?'selected':''}>Draft</option>
+                        <option value="Read" ${stage==='Read'?'selected':''}>Read</option>
+                        <option value="Deal Done" ${stage==='Deal Done'?'selected':''}>Deal Done</option>
+                    </select>
+                </div>
+                <h6 class="fw-bold mb-1">${m.subject || "No Subject"}</h6>
+                <p class="text-muted small mb-1"><i class="fa fa-user me-1"></i> ${m.name}</p>
+                <p class="text-primary small mb-2"><i class="fa fa-phone me-1"></i> ${m.phone || 'N/A'}</p>
+                <p class="small mb-0 text-truncate">${m.message}</p>
+            `;
+
+            if (stage === "Draft") { document.getElementById('col-draft').appendChild(card); cntDraft++; }
+            else if (stage === "Read") { document.getElementById('col-read').appendChild(card); cntRead++; }
+            else { document.getElementById('col-deal').appendChild(card); cntDeal++; }
+
+            // List Table Row
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="ps-4 text-muted small">${date}</td>
+                <td class="fw-bold">${m.name}</td>
+                <td>
+                    <div class="small"><i class="fa fa-envelope me-1 text-muted"></i> ${m.email}</div>
+                    <div class="small"><i class="fa fa-phone me-1 text-muted"></i> ${m.phone}</div>
+                </td>
+                <td>${m.subject || "N/A"}</td>
+                <td><span class="badge ${stage==='Draft'?'bg-warning':stage==='Read'?'bg-info':'bg-success'}">${stage}</span></td>
+                <td class="text-end pe-4">
+                    <select class="form-select form-select-sm d-inline-block w-auto" onchange="updateMsgStage('${key}', this.value)">
+                        <option value="Draft" ${stage==='Draft'?'selected':''}>Draft</option>
+                        <option value="Read" ${stage==='Read'?'selected':''}>Read</option>
+                        <option value="Deal Done" ${stage==='Deal Done'?'selected':''}>Deal Done</option>
+                    </select>
+                </td>
+            `;
+            document.getElementById('messages-table-body').appendChild(tr);
+        });
+
+        document.getElementById('count-draft').innerText = cntDraft;
+        document.getElementById('count-read').innerText = cntRead;
+        document.getElementById('count-deal').innerText = cntDeal;
+        
+        const badge = document.getElementById('new-msg-badge');
+        if(badge) {
+            badge.style.display = cntDraft > 0 ? "inline-block" : "none";
+            badge.innerText = cntDraft;
+        }
+    };
+
+    window.updateMsgStage = async (id, newStage) => {
+        const idToken = localStorage.getItem('fb_id_token');
+        if(!idToken) return;
+        
+        try {
+            const url = `https://amul-portfolio-default-rtdb.firebaseio.com/messages/${id}.json?auth=${idToken}`;
+            const r = await fetch(url, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stage: newStage })
+            });
+
+            if (r.ok) {
+                adminData.messages[id].stage = newStage;
+                renderMessages();
+            } else {
+                throw new Error("Update failed");
+            }
+        } catch(e) {
+            alert("Failed to update stage. Firebase Rules might be blocking it or your session expired.");
+        }
     };
 
     window.updateSk = (i, f, v) => { adminData.skills[i][f] = v; markUnsaved(); };
@@ -232,6 +367,27 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     init();
+
+    // --- Message View Toggle ---
+    const btnKanban = document.getElementById('btn-kanban-view');
+    const btnList = document.getElementById('btn-list-view');
+    const kanbanContainer = document.getElementById('messages-kanban');
+    const listContainer = document.getElementById('messages-list');
+
+    if(btnKanban && btnList) {
+        btnKanban.onclick = () => {
+            kanbanContainer.classList.remove('d-none');
+            listContainer.classList.add('d-none');
+            btnKanban.className = 'btn btn-primary btn-sm me-2 fw-bold px-3';
+            btnList.className = 'btn btn-outline-secondary btn-sm fw-bold px-3';
+        };
+        btnList.onclick = () => {
+            kanbanContainer.classList.add('d-none');
+            listContainer.classList.remove('d-none');
+            btnList.className = 'btn btn-primary btn-sm fw-bold px-3';
+            btnKanban.className = 'btn btn-outline-secondary btn-sm me-2 fw-bold px-3';
+        };
+    }
 
     // --- Event Listeners ---
     if (loginForm) {

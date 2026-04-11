@@ -80,7 +80,7 @@
                         <div class="col-12">
                             <div class="hero-section d-flex align-items-center justify-content-center">
                                 <div class="text-center">
-                                    <h2>hi ! i’m<span> Amul</span></h2>
+                                    <h2>hi ! i’m <span> Amul</span></h2>
                                     <p>I'm a Freelance UI/UX Designer and Developer based in Ahemdabad , Gujrat.</p>
                                     <div class="buttons">
                                         <a id="link-about" href="#about" class="btn main-btn link-page"><span>more about
@@ -114,7 +114,9 @@
                         Let's work together
                         <a class="d-block" href="mailto:amulbabariya07@gmail.com">amulbabariya07@gmail.com</a>
                         <span>+91 8320269460</span>
-                        <a class="d-block" href="admin/" style="font-size: 10px; color: rgba(255,255,255,0.2) !important; margin-top: 10px;">Admin Login</a>
+                        <a class="d-block" href="admin/"
+                            style="font-size: 10px; color: rgba(255,255,255,0.2) !important; margin-top: 10px;">Admin
+                            Login</a>
                     </p>
                 </div>
                 <!-- Home Contact Ends -->
@@ -148,24 +150,27 @@
                                 <div class="d-flex col-12 col-sm-6 personal-list-container personal-list-container-1">
                                     <ul class="list-unstyled personal-info w-100">
                                         <li>
-                                            <p><span class="material-icons">cake</span><span>Birthdate : </span><span id="birthdate-val">May
-                                                2004</span></p>
+                                            <p><span class="material-icons">cake</span><span>Birthdate : </span><span
+                                                    id="birthdate-val">May
+                                                    2004</span></p>
                                         </li>
                                         <li>
                                             <p><span class="material-icons">flag</span><span>Nationality :
                                                 </span>Indian</p>
                                         </li>
                                         <li>
-                                            <p><span class="material-icons">settings</span><span>Experience : </span><span id="experience-val">2
-                                                years</span></p>
+                                            <p><span class="material-icons">settings</span><span>Experience :
+                                                </span><span id="experience-val">2
+                                                    years</span></p>
                                         </li>
                                     </ul>
                                 </div>
                                 <div class="d-flex col-12 col-sm-6 personal-list-container personal-list-container-2">
                                     <ul class="list-unstyled personal-info w-100">
                                         <li>
-                                            <p><span class="material-icons">call</span><span>Phone : </span><span id="phone-val">+91
-                                                8320269460</span>
+                                            <p><span class="material-icons">call</span><span>Phone : </span><span
+                                                    id="phone-val">+91
+                                                    8320269460</span>
                                             </p>
                                         </li>
                                         <li>
@@ -245,7 +250,7 @@
                 <div class="container skills">
                     <div class="row">
                         <div class="col-12">
-                             <h4 class="subtitle">My skills</h4>
+                            <h4 class="subtitle">My skills</h4>
                         </div>
                     </div>
                     <div class="row align-items-center" id="skills-container">
@@ -257,7 +262,7 @@
                 <div class="container languages mt-5">
                     <div class="row">
                         <div class="col-12">
-                             <h4 class="subtitle">Languages</h4>
+                            <h4 class="subtitle">Languages</h4>
                         </div>
                     </div>
                     <div class="row" id="languages-container">
@@ -781,14 +786,17 @@
                         <div class="col-12 col-lg-8">
                             <form class="formcontact" method="post" action="#">
                                 <div class="row contactform">
-                                    <div class="col-12 col-md-4">
-                                        <input type="text" name="name" placeholder="YOUR NAME" autocomplete="off">
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <input type="text" id="contact-name" name="name" placeholder="YOUR NAME" autocomplete="off" required>
                                     </div>
-                                    <div class="col-12 col-md-4">
-                                        <input type="text" name="name" placeholder="SUBJECT" autocomplete="off">
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <input type="email" id="contact-email" name="email" placeholder="YOUR EMAIL" autocomplete="off">
                                     </div>
-                                    <div class="col-12 col-md-4">
-                                        <input type="email" name="email" placeholder="YOUR EMAIL" autocomplete="off">
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <input type="text" id="contact-phone" name="phone" placeholder="YOUR MOBILE" autocomplete="off">
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <input type="text" id="contact-subject" name="subject" placeholder="SUBJECT" autocomplete="off">
                                     </div>
                                     <div class="col-12">
                                         <textarea name="message" placeholder="YOUR MESSAGE"></textarea>

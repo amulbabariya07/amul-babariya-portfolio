@@ -163,11 +163,59 @@ $(function() {
     /*  AJAX CONTACT FORM
     /* ----------------------------------------------------------- */
 
-    $(".formcontact").on("submit", function() {
-        $(".contactform").find(".form-message").addClass("d-block");
-        $(".contactform").find(".output_message").addClass("success");
-        $(".output_message").html("Your Message has been Sent! (Static Mode)");
-        $(".formcontact")[0].reset();
+    $(".formcontact").on("submit", async function(e) {
+        e.preventDefault();
+        
+        const name = $("#contact-name").val();
+        const email = $("#contact-email").val();
+        const phone = $("#contact-phone").val();
+        const subject = $("#contact-subject").val();
+        const message = $(this).find("textarea[name='message']").val();
+
+        // Validation: Email OR Phone required
+        if (!email && !phone) {
+            $(".contactform").find(".form-message").removeClass("d-none").addClass("d-block");
+            $(".output_message").removeClass("success").html("Please provide either your Email or Mobile No.");
+            return false;
+        }
+
+        const btn = $(this).find('button[type="submit"]');
+        const originalText = btn.html();
+        btn.html("<span>Sending...</span>").prop("disabled", true);
+        
+        const payload = {
+            name: name,
+            email: email || "N/A",
+            phone: phone || "N/A",
+            subject: subject || "No Subject",
+            message: message || "",
+            stage: "Draft",
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/messages.json', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if(!response.ok) throw new Error("Firebase error (Check Security Rules)");
+
+            // Show Popup
+            alert("Thanks " + name + "! Your message has been sent successfully.");
+            
+            // Clear Form
+            $(".formcontact")[0].reset();
+            $(".contactform").find(".form-message").removeClass("d-block").addClass("d-none");
+            
+        } catch(error) {
+            console.error(error);
+            $(".contactform").find(".form-message").removeClass("d-none").addClass("d-block");
+            $(".output_message").removeClass("success").html("Error: Message couldn't be sent. Check Firebase Rules.");
+        } finally {
+            btn.html(originalText).prop("disabled", false);
+        }
         return false;
     });
 

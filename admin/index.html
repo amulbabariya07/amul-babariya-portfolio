@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,25 +12,91 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
-        .sidebar { height: 100vh; position: fixed; top: 0; left: 0; z-index: 100; padding: 48px 0 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); }
-        .sidebar-sticky { position: relative; top: 0; height: calc(100vh - 48px); padding-top: .5rem; overflow-x: hidden; overflow-y: auto; }
-        .nav-link { font-weight: 500; color: #ced4da; transition: 0.2s; }
-        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
-        .nav-link.active { color: #fff; background: #0d6efd; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3); }
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-        .login-screen { position: fixed; inset: 0; background-color: #f8f9fa; z-index: 1050; display: flex; align-items: center; justify-content: center; }
-        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #ced4da;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: #0d6efd;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #f8f9fa;
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         /* Home View Refinement */
-        .sync-hero { background: white; border-radius: 2rem; border: 1px solid #e9ecef; overflow: hidden; }
-        .sync-hero-accent { width: 100%; height: 6px; background: #0d6efd; }
+        .sync-hero {
+            background: white;
+            border-radius: 2rem;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+
+        .sync-hero-accent {
+            width: 100%;
+            height: 6px;
+            background: #0d6efd;
+        }
 
         /* Icon Colors */
-        #logout-btn { color: #dc3545 !important; }
-        #logout-btn:hover { background: transparent !important; opacity: 0.7; }
+        #logout-btn {
+            color: #dc3545 !important;
+        }
+
+        #logout-btn:hover {
+            background: transparent !important;
+            opacity: 0.7;
+        }
     </style>
 </head>
+
 <body>
 
     <!-- Login Screen -->
@@ -37,13 +104,14 @@
         <div class="card shadow-lg" style="width: 400px; border-radius: 1rem;">
             <div class="card-body p-5">
                 <div class="text-center mb-4">
-                    <h3 class="fw-bold">CMS <span class="text-primary">Console</span></h3>
+                    <h3 class="fw-bold">Amul <span class="text-primary">Portfolio</span></h3>
                     <p class="text-muted small">Access your personal workspace</p>
                 </div>
                 <form id="login-form">
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Email Address</label>
-                        <input type="email" id="email" class="form-control form-control-lg" placeholder="name@example.com" required value="amulbabariya07@gmail.com">
+                        <input type="email" id="email" class="form-control form-control-lg"
+                            placeholder="name@example.com" required value="amulbabariya07@gmail.com">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Password</label>
@@ -59,10 +127,12 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar Navigation (Black) -->
-            <nav id="admin-sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse border-end" style="display: none !important;">
+            <nav id="admin-sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse border-end"
+                style="display: none !important;">
                 <div class="position-sticky pt-3">
                     <div class="px-3 mb-5 mt-2">
-                        <h5 class="fw-bold text-white"><i class="fa fa-terminal text-primary me-2"></i> CORE<span class="text-primary">ADMIN</span></h5>
+                        <h5 class="fw-bold text-white"><i class="fa fa-terminal text-primary me-2"></i> Amul <span
+                                class="text-primary">Portfolio</span></h5>
                     </div>
                     <ul class="nav flex-column px-3">
                         <li class="nav-item">
@@ -95,28 +165,39 @@
                                 <i class="fa fa-chart-pie me-3"></i> Analytics
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-3 rounded-3 mb-2" href="#" data-view="languages">
+                                <i class="fa fa-language me-3"></i> Languages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-3 rounded-3 mb-2 bg-gradient" href="#" data-view="messages">
+                                <i class="fa fa-inbox me-3"></i> Inquiries <span class="badge bg-danger rounded-pill float-end" id="new-msg-badge" style="display:none;">New</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
 
             <!-- Main Workspace -->
             <main id="dashboard" class="col-md-9 ms-sm-auto col-lg-10 px-md-5 py-4" style="display: none;">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5 border-bottom">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5 border-bottom">
                     <h1 class="h3 fw-bold text-dark mb-0" id="current-section-name">System Overview</h1>
                     <div class="btn-toolbar mb-2 mb-md-0 d-flex align-items-center">
                         <div class="btn-group me-3">
-                            <button type="button" id="demo-json-btn" class="btn btn-outline-info px-3 me-2 rounded-3 shadow-sm border-0">
-                                <i class="fa fa-file-download fs-5"></i>
+                            <button type="button" id="global-save-btn"
+                                class="btn btn-primary px-4 shadow rounded-3 me-2">
+                                <i class="fa fa-save me-2"></i> Save
                             </button>
-                            <button type="button" id="global-save-btn" class="btn btn-primary px-4 shadow rounded-3 me-2">
-                                <i class="fa fa-cloud-upload-alt me-2"></i> Commit Changes
-                            </button>
-                            <button type="button" id="reject-changes-btn" class="btn btn-outline-secondary px-3 rounded-3 me-3">
+                            <button type="button" id="reject-changes-btn"
+                                class="btn btn-outline-secondary px-3 rounded-3 me-3">
                                 Discard
                             </button>
                         </div>
                         <div class="border-start ps-3">
-                            <button class="btn btn-outline-danger border-0 rounded-circle" id="logout-btn" title="Sign Out">
+                            <button class="btn btn-outline-danger border-0 rounded-circle" id="logout-btn"
+                                title="Sign Out">
                                 <i class="fa fa-power-off fs-5"></i>
                             </button>
                         </div>
@@ -128,28 +209,10 @@
                     <div class="sync-hero shadow-sm">
                         <div class="sync-hero-accent"></div>
                         <div class="p-5 text-center">
-                            <h1 class="display-5 fw-bold mb-3">Welcome back, <span id="welcome-user" class="text-primary">Admin</span></h1>
-                            <p class="text-muted fs-5 mb-5 mx-auto" style="max-width: 600px;">Your portfolio data is current. You can modify your professional details in the sidebar sections.</p>
-                            
-                            <div class="row justify-content-center">
-                                <div class="col-md-8 col-lg-6">
-                                    <div class="card border-0 bg-light rounded-4 p-4 mb-4">
-                                        <div class="d-flex align-items-center justify-content-center mb-4">
-                                            <div class="bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                                                <i class="fa fa-database text-primary fs-4"></i>
-                                            </div>
-                                        </div>
-                                        <h5 class="fw-bold mb-2">Master Database</h5>
-                                        <p id="sync-text-status" class="text-muted small mb-4">Status: Connection Required</p>
-                                        <button class="btn btn-dark btn-lg w-100 rounded-3 shadow-sm" id="sync-file-btn">
-                                            <i class="fa fa-link me-2"></i> Sync data.json
-                                        </button>
-                                        <div id="reconnect-file-btn" class="mt-3 text-primary fw-bold small d-none" style="cursor: pointer;">
-                                            <i class="fa fa-redo-alt me-2"></i> Restore Previous Session
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <h1 class="display-5 fw-bold mb-3">Welcome back, <span id="welcome-user"
+                                    class="text-primary">Admin</span></h1>
+                            <p id="sync-text-status" class="text-success small fw-bold mt-3"><i
+                                    class="fa fa-check-circle me-1"></i> Connected to Firebase</p>
                         </div>
                     </div>
                 </section>
@@ -167,7 +230,8 @@
                                 <input type="text" id="birthdate-text" class="form-control">
                             </div>
                             <div class="col-md-6 text-start">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Experience Level</label>
+                                <label class="form-label fw-bold small text-uppercase text-muted">Experience
+                                    Level</label>
                                 <input type="text" id="experience-text" class="form-control">
                             </div>
                             <div class="col-md-6 text-start">
@@ -185,7 +249,8 @@
                 <!-- Experience View -->
                 <section id="view-experience" class="view-section">
                     <div id="experience-list" class="mb-4"></div>
-                    <button class="btn btn-outline-primary w-100 py-3 rounded-4 border-2" id="add-exp-btn" style="border-style: dashed !important;">
+                    <button class="btn btn-outline-primary w-100 py-3 rounded-4 border-2" id="add-exp-btn"
+                        style="border-style: dashed !important;">
                         <i class="fa fa-plus-circle me-2"></i> Add New Career Milestone
                     </button>
                 </section>
@@ -193,7 +258,8 @@
                 <!-- Education View -->
                 <section id="view-education" class="view-section">
                     <div id="education-list" class="mb-4"></div>
-                    <button class="btn btn-outline-primary w-100 py-3 rounded-4 border-2" id="add-edu-btn" style="border-style: dashed !important;">
+                    <button class="btn btn-outline-primary w-100 py-3 rounded-4 border-2" id="add-edu-btn"
+                        style="border-style: dashed !important;">
                         <i class="fa fa-plus-circle me-2"></i> Add Educational Record
                     </button>
                 </section>
@@ -211,18 +277,85 @@
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="card border-0 shadow-sm rounded-4 p-4">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Projects Completed</label>
+                                <label class="form-label fw-bold small text-uppercase text-muted">Projects
+                                    Completed</label>
                                 <input type="text" id="stat-projects" class="form-control form-control-lg fw-bold">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="card border-0 shadow-sm rounded-4 p-4">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Happy Customers</label>
+                                <label class="form-label fw-bold small text-uppercase text-muted">Happy
+                                    Customers</label>
                                 <input type="text" id="stat-customers" class="form-control form-control-lg fw-bold">
                             </div>
                         </div>
                     </div>
                 </section>
+
+                <!-- Languages View -->
+                <section id="view-languages" class="view-section">
+                    <div id="languages-list" class="row g-4 mb-4"></div>
+                    <button class="btn btn-outline-primary w-100 py-3 rounded-4 border-2" id="add-lang-btn" style="border-style: dashed !important;">
+                        <i class="fa fa-plus-circle me-2"></i> Add New Language
+                    </button>
+                </section>
+
+                <!-- Messages View -->
+                <section id="view-messages" class="view-section">
+                    <div class="d-flex justify-content-between mb-4">
+                        <h4 class="fw-bold">Contact Inquiries</h4>
+                        <div>
+                            <button class="btn btn-primary btn-sm me-2 fw-bold px-3" id="btn-kanban-view"><i class="fa fa-columns me-1"></i> Kanban</button>
+                            <button class="btn btn-outline-secondary btn-sm fw-bold px-3" id="btn-list-view"><i class="fa fa-list me-1"></i> List</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Kanban View -->
+                    <div class="row g-4" id="messages-kanban">
+                        <!-- Draft Column -->
+                        <div class="col-md-4">
+                            <div class="card bg-light border-0 rounded-4 p-3 h-100">
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2"><i class="fa fa-inbox text-warning me-2"></i> Draft / New (<span id="count-draft">0</span>)</h6>
+                                <div id="col-draft" class="msg-col" style="min-height: 200px;"></div>
+                            </div>
+                        </div>
+                        <!-- Read Column -->
+                        <div class="col-md-4">
+                            <div class="card bg-light border-0 rounded-4 p-3 h-100">
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2"><i class="fa fa-envelope-open text-info me-2"></i> Read (<span id="count-read">0</span>)</h6>
+                                <div id="col-read" class="msg-col" style="min-height: 200px;"></div>
+                            </div>
+                        </div>
+                        <!-- Deal Done Column -->
+                        <div class="col-md-4">
+                            <div class="card bg-light border-0 rounded-4 p-3 h-100">
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2"><i class="fa fa-handshake text-success me-2"></i> Deal Done (<span id="count-deal">0</span>)</h6>
+                                <div id="col-deal" class="msg-col" style="min-height: 200px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- List View -->
+                    <div class="card border-0 shadow-sm rounded-4 d-none" id="messages-list">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Date</th>
+                                        <th>Name</th>
+                                        <th>Contact Info</th>
+                                        <th>Subject</th>
+                                        <th>Stage</th>
+                                        <th class="text-end pe-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="messages-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
@@ -231,4 +364,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/admin.js"></script>
 </body>
+
 </html>
