@@ -25,6 +25,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const globalSaveBtn = document.getElementById('global-save-btn');
     const rejectChangesBtn = document.getElementById('reject-changes-btn');
 
+    // Sidebar View Logic
+    const navLinks = document.querySelectorAll('.nav-link');
+    const viewSections = document.querySelectorAll('.view-section');
+    const currentSectionName = document.getElementById('current-section-name');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const viewId = `view-${link.dataset.view}`;
+            
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            viewSections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === viewId) {
+                    section.classList.add('active');
+                    if (currentSectionName) currentSectionName.innerText = link.innerText.trim();
+                }
+            });
+        });
+    });
+
     let adminData = null;
     let localFileHandle = null;
     let hasUnsavedChanges = false;
@@ -41,14 +64,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    const expList = document.getElementById('experience-list');
+    const addExpBtn = document.getElementById('add-exp-btn');
+    const eduList = document.getElementById('education-list');
+    const addEduBtn = document.getElementById('add-edu-btn');
+
     // --- Core Data Logic ---
     const renderEverything = () => {
         if (!adminData) return;
         
         // Header
         if (adminData.profile) {
-            welcomeUser.innerText = adminData.profile.name;
-            avatarTxt.innerText = adminData.profile.name.charAt(0);
+            if (welcomeUser) welcomeUser.innerText = adminData.profile.name;
+            if (avatarTxt) avatarTxt.innerText = adminData.profile.name.charAt(0);
             
             // Personal Info
             bioText.value = adminData.profile.bio || '';
@@ -68,32 +96,103 @@ document.addEventListener('DOMContentLoaded', function () {
         if (adminData.skills) {
             skillsList.innerHTML = '';
             adminData.skills.forEach((skill, index) => {
-                const card = document.createElement('div');
-                card.className = 'panel-card';
-                card.style.cssText = 'padding: 1.5rem; margin-bottom: 0; position: relative; border: 1px solid rgba(255,255,255,0.05);';
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
-                        <div style="flex: 1;">
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 0.65rem; color: var(--primary); text-transform: uppercase;">Skill Name</label>
-                                <input type="text" value="${skill.name}" oninput="updateSk(${index}, 'name', this.value)" style="background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.1); width:100%; color:white; font-size: 0.9rem; padding: 5px 0;">
-                            </div>
-                            <div>
-                                <label style="font-size: 0.65rem; color: var(--primary); text-transform: uppercase;">Level (%)</label>
-                                <input type="number" value="${skill.level}" oninput="updateSk(${index}, 'level', this.value)" style="background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.1); width:100%; color:white; font-size: 0.9rem; padding: 5px 0;">
-                            </div>
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4';
+                col.innerHTML = `
+                    <div class="card border-0 shadow-sm rounded-4 p-3 position-relative">
+                        <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 border-0" onclick="rmSk(${index})"><i class="fa fa-trash"></i></button>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Skill Name</label>
+                            <input type="text" class="form-control form-control-sm" value="${skill.name}" oninput="updateSk(${index}, 'name', this.value)">
                         </div>
-                        <button onclick="rmSk(${index})" style="background:transparent; border:none; color:#ff4d4d; cursor:pointer;">
-                            <span class="material-icons">delete</span>
-                        </button>
+                        <div>
+                            <label class="form-label small fw-bold text-muted">Level (%)</label>
+                            <input type="number" class="form-control form-control-sm" value="${skill.level}" oninput="updateSk(${index}, 'level', this.value)">
+                        </div>
                     </div>`;
-                skillsList.appendChild(card);
+                skillsList.appendChild(col);
+            });
+        }
+
+        // Experience
+        if (expList && adminData.experience_list) {
+            expList.innerHTML = '';
+            adminData.experience_list.forEach((exp, index) => {
+                const item = document.createElement('div');
+                item.className = 'card border-0 shadow-sm rounded-4 p-4 mb-4 position-relative';
+                item.innerHTML = `
+                    <button class="btn btn-outline-danger position-absolute top-0 end-0 m-3 border-0" onclick="rmExp(${index})"><i class="fa fa-trash"></i></button>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Role / Title</label>
+                        <input type="text" class="form-control fw-bold" value="${exp.title}" oninput="updateExp(${index}, 'title', this.value)">
+                    </div>
+                    <div class="row g-3 mb-3 text-start">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">Period</label>
+                            <input type="text" class="form-control" value="${exp.period}" oninput="updateExp(${index}, 'period', this.value)">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">Company</label>
+                            <input type="text" class="form-control" value="${exp.company}" oninput="updateExp(${index}, 'company', this.value)">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label small fw-bold text-muted">Responsibilities</label>
+                        <textarea class="form-control" rows="3" oninput="updateExp(${index}, 'description', this.value)">${exp.description}</textarea>
+                    </div>`;
+                expList.appendChild(item);
+            });
+        }
+
+        // Education
+        if (eduList && adminData.education_list) {
+            eduList.innerHTML = '';
+            adminData.education_list.forEach((edu, index) => {
+                const item = document.createElement('div');
+                item.className = 'card border-0 shadow-sm rounded-4 p-4 mb-4 position-relative';
+                item.innerHTML = `
+                    <button class="btn btn-outline-danger position-absolute top-0 end-0 m-3 border-0" onclick="rmEdu(${index})"><i class="fa fa-trash"></i></button>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Degree / Cert</label>
+                        <input type="text" class="form-control fw-bold" value="${edu.degree}" oninput="updateEdu(${index}, 'degree', this.value)">
+                    </div>
+                    <div class="row g-3 mb-3 text-start">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">Period</label>
+                            <input type="text" class="form-control" value="${edu.period}" oninput="updateEdu(${index}, 'period', this.value)">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">Institution</label>
+                            <input type="text" class="form-control" value="${edu.institution}" oninput="updateEdu(${index}, 'institution', this.value)">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label small fw-bold text-muted">Description</label>
+                        <textarea class="form-control" rows="2" oninput="updateEdu(${index}, 'description', this.value)">${edu.description}</textarea>
+                    </div>`;
+                eduList.appendChild(item);
             });
         }
     };
 
     window.updateSk = (i, f, v) => { adminData.skills[i][f] = v; markUnsaved(); };
     window.rmSk = (i) => { adminData.skills.splice(i, 1); markUnsaved(); renderEverything(); };
+    
+    window.updateExp = (i, f, v) => { adminData.experience_list[i][f] = v; markUnsaved(); };
+    window.rmExp = (i) => { adminData.experience_list.splice(i, 1); markUnsaved(); renderEverything(); };
+    if (addExpBtn) addExpBtn.onclick = () => {
+        if (!adminData.experience_list) adminData.experience_list = [];
+        adminData.experience_list.push({title:'New Role', period:'2024 - Present', company:'Company Name', description:'Job description here...'});
+        markUnsaved(); renderEverything();
+    };
+
+    window.updateEdu = (i, f, v) => { adminData.education_list[i][f] = v; markUnsaved(); };
+    window.rmEdu = (i) => { adminData.education_list.splice(i, 1); markUnsaved(); renderEverything(); };
+    if (addEduBtn) addEduBtn.onclick = () => {
+        if (!adminData.education_list) adminData.education_list = [];
+        adminData.education_list.push({degree:'New Degree', period:'2024', institution:'University Name', description:'Description here...'});
+        markUnsaved(); renderEverything();
+    };
     if (addSkillBtn) addSkillBtn.onclick = () => { 
         if (!adminData.skills) adminData.skills = [];
         adminData.skills.push({name: 'New Skill', level: '80'}); 
@@ -177,6 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Check login session
         if (localStorage.getItem('admin_session') === 'active') {
             dashboard.style.display = 'block';
+            document.getElementById('admin-sidebar').style.display = 'flex';
             loginContainerRoot.style.display = 'none';
             document.body.style.overflow = 'auto';
         }
@@ -225,7 +325,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             errorMsg.style.display = 'block';
-            errorMsg.innerText = "Invalid credentials. Please try again.";
+            errorMsg.innerText = "Access denied: check your credentials.";
+            errorMsg.style.color = "#ff4d4d";
         };
     }
 
@@ -290,6 +391,48 @@ document.addEventListener('DOMContentLoaded', function () {
     [bioText, birthdateText, experienceText, phoneText, addressText, statProjects, statCustomers].forEach(el => {
         if (el) el.oninput = () => markUnsaved();
     });
+
+    const demoJsonBtn = document.getElementById('demo-json-btn');
+    if (demoJsonBtn) {
+        demoJsonBtn.onclick = () => {
+            const demo = {
+                "admin": { "email": "admin@test.com", "password": "pass" },
+                "profile": {
+                    "name": "Demo User",
+                    "title": "Software Architect",
+                    "bio": "Extremely experienced developer with a passion for building robust applications.",
+                    "birthdate": "Jan 1990",
+                    "nationality": "Indian",
+                    "experience": "10 Years",
+                    "phone": "+91 9999999999",
+                    "address": "Silicon Valley, CA",
+                    "email": "demo@user.com"
+                },
+                "stats": { "experience": "10", "projects": "50", "customers": "100" },
+                "skills": [
+                    { "name": "React", "level": "90" },
+                    { "name": "Node.js", "level": "85" }
+                ],
+                "experience_list": [
+                    { "title": "Senior Engineer", "period": "2020 - 2024", "company": "Tech Corp", "description": "Led a team of 10 developers." }
+                ],
+                "education_list": [
+                    { "degree": "B.Tech CS", "period": "2012", "institution": "Stanford University", "description": "GPA: 4.0" }
+                ],
+                "languages": [
+                    { "name": "English", "level": "Fluent" }
+                ]
+            };
+            const blob = new Blob([JSON.stringify(demo, null, 4)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'demo_portfolio.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showNotification("✅ Demo file generated and downloaded!");
+        };
+    }
 
     function showNotification(msg) {
         const t = document.createElement('div');

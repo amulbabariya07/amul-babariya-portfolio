@@ -5,56 +5,102 @@
     },
     "profile": {
         "name": "Amul Babariya",
-        "title": "Freelance UI/UX Designer and Developer",
-        "bio": "I'm Amul Babariya, Indian based web designer and front‑end developer living in Ahmedabad , Gujrat focused on crafting clean, creative and user‑friendly experiences, I build beautiful and powerful websites and android applications.",
+        "title": "Odoo Developer",
+        "bio": "Odoo Developer with experience in custom module development and eCommerce solutions. Skilled in Python, XML, and web technologies. Focused on solving problems, building reliable features, and working well with teams.",
         "birthdate": "May 2004",
         "nationality": "Indian",
-        "experience": "3 years",
+        "experience": "2 Years",
         "phone": "+91 8320269460",
-        "address": "Ahmedabad , Gujrat",
+        "address": "Junagadh, India 362610",
         "email": "amulbabariya07@gmail.com"
     },
     "stats": {
-        "experience": "3",
-        "projects": "56",
-        "customers": "89"
+        "experience": "2",
+        "projects": "15",
+        "customers": "10"
     },
     "skills": [
         {
-            "name": "HTML",
-            "level": "80"
-        },
-        {
-            "name": "JAVASCRIPT",
-            "level": "70"
-        },
-        {
-            "name": "CSSS",
-            "level": "60"
-        },
-        {
-            "name": "PHP",
-            "level": "57"
-        },
-        {
-            "name": "WORDPRESS",
-            "level": "90"
-        },
-        {
-            "name": "DRUPAL",
-            "level": "80"
-        },
-        {
-            "name": "REACT",
-            "level": "50"
-        },
-        {
-            "name": "Babariyaaa",
-            "level": "00"
+            "name": "Odoo Development",
+            "level": "100"
         },
         {
             "name": "Python",
-            "level": "55"
+            "level": "100"
+        },
+        {
+            "name": "Custom Module Development",
+            "level": "100"
+        },
+        {
+            "name": "XML & QWeb Templates",
+            "level": "100"
+        },
+        {
+            "name": "Website & eCommerce Customization",
+            "level": "90"
+        },
+        {
+            "name": "Bootstrap, HTML5 & CSS3",
+            "level": "85"
+        },
+        {
+            "name": "JavaScript (Odoo Web Flow)",
+            "level": "75"
+        }
+    ],
+    "experience_list": [
+        {
+            "title": "Odoo Developer",
+            "period": "06/2023 - 06/2024",
+            "company": "Sismatrix Systems Pvt Ltd",
+            "description": "Developed an end-to-end Garage Management system in Odoo. Built and customized multiple Odoo eCommerce websites. Migrated Odoo system and custom modules from v14 to v18."
+        },
+        {
+            "title": "Odoo Developer 123",
+            "period": "06/2024 - Present",
+            "company": "TechUltra",
+            "description": "Odoo devloper 123"
+        }
+    ],
+    "education_list": [
+        {
+            "degree": "M.Sc. (CA & IT)",
+            "period": "03/2026",
+            "institution": "Ganpat University, Mehsana",
+            "description": "Current CGPA: 7.78"
+        },
+        {
+            "degree": "B.Sc. (CA & IT)",
+            "period": "05/2024",
+            "institution": "Ganpat University, Mehsana",
+            "description": "Graduated with 8.12 CGPA"
+        },
+        {
+            "degree": "12th Standard",
+            "period": "05/2021",
+            "institution": "Dev International School, Junagadh",
+            "description": "Completed with 73%"
+        },
+        {
+            "degree": "10th - SSC",
+            "period": "03/2019",
+            "institution": "Pulkit Madhyamik School, Junagadh",
+            "description": "Completed with 75.83%"
+        }
+    ],
+    "languages": [
+        {
+            "name": "English",
+            "level": "Good"
+        },
+        {
+            "name": "Hindi",
+            "level": "Very Good"
+        },
+        {
+            "name": "Gujarati",
+            "level": "Native"
         }
     ]
 }

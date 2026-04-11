@@ -116,72 +116,22 @@ $(function() {
     /* ----------------------------------------------------------- */
     function ResumeCarousels() {
         $('#experience').on('click', function () {
-            $('#educationcarousel').owlCarousel('destroy');
             $('#experience').addClass('active');
             $('#education').removeClass('active');
-            $('#educationcarousel').removeClass('visiblecarousel').addClass('hiddencarousel');
+            $('#education-hierarchy').removeClass('visiblecarousel').addClass('hiddencarousel');
             $('#experiencecarousel').removeClass('hiddencarousel').addClass('visiblecarousel');
-            $('#experiencecarousel').owlCarousel({
-                loop: false,
-                margin: 30,
-                nav: false,
-                responsive: {
-                    0: {
-                        items: 1,
-                        dots: true
-                    },
-                    768: {
-                        items: 2
-                    },
-                    992: {
-                        items: 3
-                    }
-                }
-            });
+            /* OwlCarousel Removed for Experience Timeline */
         });
         $('#education').on('click', function () {
-            $('#experiencecarousel').owlCarousel('destroy');
+            /* $('#experiencecarousel').owlCarousel('destroy'); */
             $('#education').addClass('active');
             $('#experience').removeClass('active');
             $('#experiencecarousel').removeClass('visiblecarousel').addClass('hiddencarousel');
-            $('#educationcarousel').removeClass('hiddencarousel').addClass('visiblecarousel');
-            $('#educationcarousel').owlCarousel({
-                loop: false,
-                margin: 30,
-                nav: false,
-                responsive: {
-                    0: {
-                        items: 1,
-                        dots: true
-                    },
-                    768: {
-                        items: 2
-                    },
-                    992: {
-                        items: 3
-                    }
-                }
-            });
+            $('#education-hierarchy').removeClass('hiddencarousel').addClass('visiblecarousel');
         })
     }
     if ($("body").hasClass("index")) {
-        $('#experiencecarousel').owlCarousel({
-            loop: false,
-            margin: 30,
-            nav: false,
-            responsive: {
-                0: {
-                    items: 1,
-                    dots: true
-                },
-                768: {
-                    items: 2
-                },
-                992: {
-                    items: 3
-                }
-            }
-        });
+        /* OwlCarousel Removed */
         ResumeCarousels();
     }
     /* ----------------------------------------------------------- */
@@ -190,24 +140,7 @@ $(function() {
 
     $('.link-about').on('click', function() {
         setTimeout(function () {
-            $('#experiencecarousel').owlCarousel('destroy');
-            $('#experiencecarousel').owlCarousel({
-                loop:false,
-                margin:30,
-                nav: false,
-                responsive:{
-                    0:{
-                        items:1,
-                        dots:true
-                    },
-                    768:{
-                        items:2
-                    },
-                    992:{
-                        items:3
-                    }
-                }
-            });
+            /* OwlCarousel Removed */
         }, 2000);
     });
 
@@ -250,45 +183,7 @@ $(function() {
         /* ----------------------------------------------------------- */
 
         if ($("body").hasClass("index")) {
-            $('#experiencecarousel').owlCarousel('destroy');
-            $('#educationcarousel').owlCarousel('destroy');
-            if ($('#experiencecarousel').hasClass('visiblecarousel')) {
-                $('#experiencecarousel').owlCarousel({
-                    loop: false,
-                    margin: 30,
-                    nav: false,
-                    responsive: {
-                        0: {
-                            items: 1,
-                            dots: true
-                        },
-                        768: {
-                            items: 2
-                        },
-                        992: {
-                            items: 3
-                        }
-                    }
-                });
-            } else {
-                $('#educationcarousel').owlCarousel({
-                    loop: false,
-                    margin: 30,
-                    nav: false,
-                    responsive: {
-                        0: {
-                            items: 1,
-                            dots: true
-                        },
-                        768: {
-                            items: 2
-                        },
-                        992: {
-                            items: 3
-                        }
-                    }
-                });
-            }
+            /* OwlCarousel Removed */
         }
 
     });
