@@ -200,85 +200,34 @@ document.addEventListener('DOMContentLoaded', function () {
         renderEverything(); 
     };
 
-    // --- Handle Persistence ---
-    const DB_NAME = 'PortfolioAdminDB';
-    const STORE_NAME = 'FileHandles';
-    const openDB = () => new Promise((resolve) => {
-        const r = indexedDB.open(DB_NAME, 1);
-        r.onupgradeneeded = () => r.result.createObjectStore(STORE_NAME);
-        r.onsuccess = () => resolve(r.result);
-    });
-
-    const getHandle = async () => {
-        const db = await openDB();
-        return db.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).get('data.json');
-    };
-
-    const saveHandle = async (h) => {
-        const db = await openDB();
-        db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(h, 'data.json');
-    };
-
-    const loadFromFile = async (handle) => {
+    // --- Firebase Sync Logic ---
+    const loadFromFirebase = async () => {
         try {
-            const file = await handle.getFile();
-            const text = await file.text();
-            adminData = JSON.parse(text);
-            localFileHandle = handle;
-            syncFileBtn.style.display = 'none';
-            syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-check-double"></i> Database Online: data.json</span>';
-            renderEverything();
-            hasUnsavedChanges = false;
-        } catch(e) { console.error("File load failed:", e); }
+            const r = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
+            if (r.ok) {
+                adminData = await r.json();
+                if(syncFileBtn) syncFileBtn.style.display = 'none';
+                syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-wifi"></i> Live: Connected to Firebase</span>';
+                renderEverything();
+                hasUnsavedChanges = false;
+            } else {
+                throw new Error("Unable to fetch data from Firebase");
+            }
+        } catch(e) {
+            console.error(e);
+            syncTextStatus.innerHTML = '<span style="color: #ff4d4d"><i class="fa fa-times"></i> Database Error</span>';
+        }
     };
 
     // --- Init App ---
     const init = async () => {
-        // Try Cache first
-        const cache = localStorage.getItem('portfolio_data_cache');
-        if (cache) {
-            adminData = JSON.parse(cache);
-            renderEverything();
-        }
-
-        // Try handle auto-sync
-        const h = await getHandle();
-        if (h && typeof h.queryPermission === 'function') {
-            const status = await h.queryPermission({ mode: 'readwrite' });
-            if (status === 'granted') {
-                loadFromFile(h);
-            } else {
-                syncFileBtn.style.display = 'block';
-                syncFileBtn.innerHTML = '<i class="fa fa-plug"></i> Re-connect data.json';
-                syncTextStatus.innerHTML = '<span style="color: #ffcc00">Database Connection Sleeping. Click to Re-connect.</span>';
-                document.body.addEventListener('click', async function activate() {
-                    try {
-                        const p = await h.requestPermission({ mode: 'readwrite' });
-                        if (p === 'granted') {
-                            loadFromFile(h);
-                            document.body.removeEventListener('click', activate);
-                        }
-                    } catch(e) {}
-                }, { once: true });
-            }
-        } else {
-            // Blocked by protocol (file://)
-            syncFileBtn.style.display = 'block';
-            syncFileBtn.style.background = "rgba(255, 77, 5, 0.1)";
-            syncFileBtn.style.borderColor = "var(--primary)";
-            syncFileBtn.innerHTML = '<i class="fa fa-folder-open"></i> Link data.json (Local Folder)';
-            syncTextStatus.innerHTML = '<span style="color: #a0a0a0; font-size: 0.75rem;">Running via File. Click <b>Link</b> to enable saves.</span>';
-            
-            // Helpful Guide
-            showNotification("🚀 Setup Tip: Use 'Live Server' for automatic zero-click syncing.");
-        }
-
         // Check login session
         if (localStorage.getItem('admin_session') === 'active') {
             dashboard.style.display = 'block';
             document.getElementById('admin-sidebar').style.display = 'flex';
             loginContainerRoot.style.display = 'none';
             document.body.style.overflow = 'auto';
+            loadFromFirebase();
         }
     };
 
@@ -292,50 +241,34 @@ document.addEventListener('DOMContentLoaded', function () {
             const pwInput = document.getElementById('password').value;
             
             errorMsg.style.display = 'none';
+            const apiKey = "AIzaSyADf8OmA6RXLpdMqmAm9hfWxM_XtTvpaXM";
 
-            // Triple-check credentials
             try {
-                // 1. Try fetching from data.json first
-                const r = await fetch('../data.json');
-                const d = await r.json();
-                if (emInput === d.admin.email && pwInput === d.admin.password) {
+                const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: emInput, password: pwInput, returnSecureToken: true })
+                });
+                
+                const data = await response.json();
+                if (data.idToken) {
                     localStorage.setItem('admin_session', 'active');
+                    localStorage.setItem('fb_id_token', data.idToken);
                     location.reload();
-                    return;
+                } else {
+                    throw new Error("Invalid credentials");
                 }
             } catch(e) {
-                // 2. Local fallback if browser blocks file reading (CORS)
-                console.warn("Using offline login fallback.");
-                if (emInput === "amulbabariya07@gmail.com" && pwInput === "AmulBabariya@121") {
-                    localStorage.setItem('admin_session', 'active');
-                    location.reload();
-                    return;
-                }
+                errorMsg.style.display = 'block';
+                errorMsg.innerText = "Access denied: check your credentials.";
+                errorMsg.style.color = "#ff4d4d";
             }
-            
-            // 3. Last check against cached data if any
-            const cache = localStorage.getItem('portfolio_data_cache');
-            if (cache) {
-                const d = JSON.parse(cache);
-                if (emInput === d.admin.email && pwInput === d.admin.password) {
-                    localStorage.setItem('admin_session', 'active');
-                    location.reload();
-                    return;
-                }
-            }
-
-            errorMsg.style.display = 'block';
-            errorMsg.innerText = "Access denied: check your credentials.";
-            errorMsg.style.color = "#ff4d4d";
         };
     }
 
     if (globalSaveBtn) {
         globalSaveBtn.onclick = async () => {
-            if (!localFileHandle) {
-                showNotification("Error: Please sync your data.json first!");
-                return;
-            }
+            if (!adminData) return;
 
             // Capture all fields
             adminData.profile.bio = bioText.value;
@@ -347,42 +280,46 @@ document.addEventListener('DOMContentLoaded', function () {
             adminData.stats.customers = statCustomers.value;
 
             try {
-                const w = await localFileHandle.createWritable();
-                await w.write(JSON.stringify(adminData, null, 4));
-                await w.close();
+                const idToken = localStorage.getItem('fb_id_token');
+                const url = `https://amul-portfolio-default-rtdb.firebaseio.com/.json` + (idToken ? `?auth=${idToken}` : '');
+                
+                const r = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(adminData)
+                });
+
+                if (!r.ok) {
+                    throw new Error("Permission Denied (Firebase Rule)");
+                }
+
                 localStorage.setItem('portfolio_data_cache', JSON.stringify(adminData));
                 hasUnsavedChanges = false;
-                syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-save"></i> data.json Updated!</span>';
-                showNotification("Success: Statistics and Skills saved! 🚀");
+                syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-save"></i> Firebase Updated!</span>';
+                showNotification("Success: Data saved LIVE to Firebase! 🚀");
             } catch(e) {
                 console.error("Save failed:", e);
-                showNotification("Permission Denied: Could not write to file.");
+                showNotification("Permission Denied: Could not write to Firebase.");
             }
         };
     }
 
     if (rejectChangesBtn) {
         rejectChangesBtn.onclick = () => {
-            if (confirm("Reject all changes and reload from the real data.json?")) {
-                localStorage.removeItem('portfolio_data_cache');
+            if (confirm("Discard all edits and reload from Firebase?")) {
                 location.reload();
             }
         };
     }
 
     if (syncFileBtn) {
-        syncFileBtn.onclick = async () => {
-            try {
-                const [h] = await window.showOpenFilePicker({ types: [{ description:'JSON', accept: {'application/json':['.json']} }] });
-                await saveHandle(h);
-                loadFromFile(h);
-            } catch(e) {}
-        };
+        syncFileBtn.style.display = 'none'; // Firebase is always connected
     }
 
     if (logoutBtn) {
         logoutBtn.onclick = () => {
             localStorage.removeItem('admin_session');
+            localStorage.removeItem('fb_id_token');
             localStorage.removeItem('portfolio_data_cache');
             location.reload();
         };

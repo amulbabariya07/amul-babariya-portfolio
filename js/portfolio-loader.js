@@ -2,16 +2,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadPortfolioData = async () => {
         try {
             let data = null;
-            // Check localStorage for overrides from Admin panel
-            const localData = localStorage.getItem('portfolio_data_cache');
-            
-            if (localData) {
-                data = JSON.parse(localData);
-                console.log("Portfolio: Loaded from LocalStorage Cache");
-            } else {
+            try {
+                const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
+                if (!response.ok) throw new Error("Firebase fetch failed");
+                data = await response.json();
+                console.log("Portfolio: Loaded LIVE from Firebase");
+            } catch (err) {
+                console.warn("Failed to load from Firebase, falling back to local file:", err);
                 const response = await fetch('data.json');
                 data = await response.json();
-                console.log("Portfolio: Loaded from data.json");
             }
 
             if (data && data.profile) {
