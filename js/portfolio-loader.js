@@ -35,17 +35,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateElement('stat-cust-val', data.stats.customers);
                 }
 
-                // Render Skills
+                // Render Skills (Neon Linear Cards)
                 const skillsContainer = document.getElementById('skills-container');
                 if (skillsContainer && data.skills) {
                     skillsContainer.innerHTML = '';
                     data.skills.forEach(skill => {
                         const skillHtml = `
                             <div class="col-12 col-md-6">
-                                <span class="skill-text">${skill.name}</span>
-                                <div class="chart-bar">
-                                    <span class="item-progress" data-percent="${skill.level}" style="width: ${skill.level}%;"></span>
-                                    <span class="percent" style="right: ${100 - parseInt(skill.level)}%;">${skill.level}%<span class="arrow"></span></span>
+                                <div class="skill-card-neon">
+                                    <div class="skill-header-neon">
+                                        <span class="skill-name-neon">${skill.name}</span>
+                                        <span class="skill-percent-neon">${skill.level}%</span>
+                                    </div>
+                                    <div class="skill-bar-outer-neon">
+                                        <div class="skill-bar-inner-neon" style="width: ${skill.level}%"></div>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -158,6 +162,94 @@ document.addEventListener('DOMContentLoaded', function() {
                         timeline.insertAdjacentHTML('beforeend', eduHtml);
                     });
                 }
+
+                // Render Portfolio (Odoo App Store Style)
+                const portfolioGrid = document.getElementById('portfolio-grid');
+                if (portfolioGrid && data.portfolio) {
+                    portfolioGrid.innerHTML = '';
+                    data.portfolio.forEach((proj, index) => {
+                        const tagsList = proj.tags ? proj.tags.split(',') : [];
+                        const colHtml = `
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card bg-dark border-light border-opacity-10 h-100 shadow-sm rounded-4 overflow-hidden project-card-odoo" 
+                                     style="cursor: pointer; transition: transform 0.3s ease;" 
+                                     onclick="showProjectView(${index})">
+                                    <div class="ratio ratio-4x3">
+                                        <img src="${proj.header_img || ''}" class="card-img-top object-fit-cover" alt="${proj.name}">
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title text-white fw-bold mb-1 text-truncate">${proj.name}</h6>
+                                        <p class="card-text text-white-50 x-small mb-2" style="font-size: 11px; height: 32px; overflow: hidden;">${proj.short_desc || 'No description'}</p>
+                                        <div class="d-flex flex-wrap">
+                                            ${tagsList.slice(0, 2).map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 text-primary small me-1" style="font-size: 9px;">${t.trim()}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        portfolioGrid.insertAdjacentHTML('beforeend', colHtml);
+                    });
+                    window._portfolio_data = data.portfolio;
+                }
+
+                window.showProjectView = (idx) => {
+                    const proj = window._portfolio_data[idx];
+                    if (!proj) return;
+
+                    // Header Img (Row 1)
+                    document.getElementById('v-header-img').src = proj.header_img || '';
+                    
+                    // Name (Row 2)
+                    document.getElementById('v-name').innerText = proj.name;
+
+                    // Tags (Row 3)
+                    const tagsList = proj.tags ? proj.tags.split(',') : [];
+                    document.getElementById('v-tags').innerHTML = tagsList.map(t => 
+                        `<span class="badge rounded-pill bg-primary bg-opacity-10 text-primary p-2 px-3 mx-1 mb-2" style="font-size: 12px; border: 1px solid rgba(13, 110, 253, 0.2);">${t.trim()}</span>`
+                    ).join('');
+
+                    // Short Desc (Row 4)
+                    document.getElementById('v-short-desc').innerText = proj.short_desc || '';
+
+                    // Details (Row 5)
+                    document.getElementById('v-details').innerText = proj.details || '';
+
+                    // Gallery (Row 6)
+                    const galRow = document.getElementById('v-gallery-row');
+                    galRow.innerHTML = '';
+                    if (proj.gallery_imgs) {
+                        const imgs = proj.gallery_imgs.split('|');
+                        imgs.forEach(imgUrl => {
+                            if (!imgUrl.trim()) return;
+                            const galCol = `
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="ratio ratio-4x3 mb-3" style="cursor: zoom-in;" onclick="showBigImg('${imgUrl.trim()}')">
+                                        <img src="${imgUrl.trim()}" class="img-fluid rounded-4 shadow-sm object-fit-cover border border-light border-opacity-10">
+                                    </div>
+                                </div>
+                            `;
+                            galRow.insertAdjacentHTML('beforeend', galCol);
+                        });
+                    }
+
+                    // UI Toggle
+                    document.getElementById('work-content').style.display = 'none';
+                    document.getElementById('project-view').style.display = 'block';
+                    
+                    // Scroll to top of section
+                    document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
+                };
+
+                window.closeProjectView = () => {
+                    document.getElementById('project-view').style.display = 'none';
+                    document.getElementById('work-content').style.display = 'block';
+                };
+
+                window.showBigImg = (url) => {
+                    document.getElementById('preview-img-full').src = url;
+                    const myModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+                    myModal.show();
+                };
 
                 // Render Languages (Glass Dark Design)
                 const langContainer = document.getElementById('languages-container');

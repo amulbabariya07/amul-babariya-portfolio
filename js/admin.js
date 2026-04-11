@@ -181,7 +181,105 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
         renderLanguages();
+        renderPortfolio();
         renderMessages();
+    };
+
+    const renderPortfolio = () => {
+        const portList = document.getElementById('portfolio-list');
+        if (!portList) return;
+        if (!adminData.portfolio) adminData.portfolio = [];
+        
+        portList.innerHTML = '';
+        adminData.portfolio.forEach((proj, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-md-12';
+            col.innerHTML = `
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 position-relative">
+                    <button class="btn btn-outline-danger position-absolute top-0 end-0 m-3 border-0" onclick="rmProject(${index})"><i class="fa fa-trash"></i></button>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Project Name</label>
+                            <input type="text" class="form-control mb-3" value="${proj.name || ''}" oninput="updateProject(${index}, 'name', this.value)">
+                            
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Header Img</label>
+                                <div class="input-group">
+                                    <input type="text" id="p-img-${index}" class="form-control" placeholder="URL or Base64" value="${proj.header_img || ''}" oninput="updateProject(${index}, 'header_img', this.value)">
+                                    <input type="file" class="d-none" id="f-img-${index}" accept="image/*" onchange="upImg(event, ${index}, 'header_img')">
+                                    <button class="btn btn-outline-primary" onclick="document.getElementById('f-img-${index}').click()"><i class="fa fa-upload"></i></button>
+                                </div>
+                                <div class="mt-2 text-center" style="height: 60px; overflow: hidden; background: #f8f9fa; border-radius: 8px;">
+                                    ${proj.header_img ? `<img src="${proj.header_img}" style="height: 100%; object-fit: contain;">` : '<small class="text-muted" style="line-height: 60px;">No preview</small>'}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase d-flex justify-content-between">
+                                    Multiple Img (Gallery)
+                                    <a href="javascript:void(0)" class="text-danger x-small" onclick="clearGal(${index})">Clear All</a>
+                                </label>
+                                <textarea id="p-gal-${index}" class="form-control mb-2" rows="2" placeholder="URLs separated by |" oninput="updateProject(${index}, 'gallery_imgs', this.value)">${proj.gallery_imgs || ''}</textarea>
+                                <input type="file" class="d-none" id="f-gal-${index}" accept="image/*" multiple onchange="upImg(event, ${index}, 'gallery_imgs')">
+                                <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="document.getElementById('f-gal-${index}').click()"><i class="fa fa-plus me-1"></i> Upload Gallery Files</button>
+                                
+                                <div class="d-flex flex-wrap gap-2 p-2 bg-light rounded-3" id="gal-prev-${index}" style="min-height: 50px;">
+                                    ${(proj.gallery_imgs || '').split('|').filter(img => img.trim()).map(img => `
+                                        <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 6px; border: 1px solid #dee2e6;">
+                                            <img src="${img.trim()}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    `).join('') || '<small class="text-muted m-auto">No gallery images</small>'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Short Description</label>
+                            <input type="text" class="form-control mb-3" value="${proj.short_desc || ''}" oninput="updateProject(${index}, 'short_desc', this.value)">
+
+                            <label class="form-label small fw-bold text-muted text-uppercase">Tags (e.g. Odoo, Python)</label>
+                            <input type="text" class="form-control mb-3" value="${proj.tags || ''}" oninput="updateProject(${index}, 'tags', this.value)">
+
+                            <label class="form-label small fw-bold text-muted text-uppercase">Details</label>
+                            <textarea class="form-control mb-3" rows="8" oninput="updateProject(${index}, 'details', this.value)">${proj.details || ''}</textarea>
+                        </div>
+                    </div>
+                </div>`;
+            portList.appendChild(col);
+        });
+    };
+
+    window.updateProject = (i, f, v) => { adminData.portfolio[i][f] = v; markUnsaved(); };
+    window.clearGal = (i) => { adminData.portfolio[i].gallery_imgs = ''; markUnsaved(); renderEverything(); };
+    window.rmProject = (i) => { adminData.portfolio.splice(i, 1); markUnsaved(); renderEverything(); };
+    const addProjBtn = document.getElementById('add-project-btn');
+    if (addProjBtn) addProjBtn.onclick = () => {
+        if (!adminData.portfolio) adminData.portfolio = [];
+        adminData.portfolio.push({ name: 'New Project', header_img: '', gallery_imgs: '', short_desc: '', details: '', tags: '' });
+        markUnsaved(); renderEverything();
+    };
+
+    window.upImg = (ev, i, field) => {
+        const files = ev.target.files;
+        if (!files.length) return;
+        
+        const promises = Array.from(files).map(file => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        });
+
+        Promise.all(promises).then(results => {
+            if (field === 'gallery_imgs') {
+                const existing = adminData.portfolio[i][field] ? adminData.portfolio[i][field].split('|') : [];
+                adminData.portfolio[i][field] = existing.concat(results).filter(x => x).join('|');
+            } else {
+                adminData.portfolio[i][field] = results[0];
+            }
+            markUnsaved();
+            renderEverything();
+        });
     };
 
     const renderLanguages = () => {
