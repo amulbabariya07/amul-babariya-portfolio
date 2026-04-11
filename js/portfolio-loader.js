@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const loadPortfolioData = async () => {
         try {
             const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (data && data.profile) {
                 const profile = data.profile;
-                
+
                 // Update DOM elements if they exist
                 const updateElement = (id, value) => {
                     const el = document.getElementById(id);
@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateElement('phone-val', profile.phone);
                 updateElement('address-val', profile.address);
                 updateElement('email-val', profile.email);
-                
+
                 // Update Name and Title in Hero section
                 const heroH2 = document.querySelector('.hero-section h2 span');
                 if (heroH2) heroH2.innerText = profile.name.split(' ')[0];
-                
+
                 const heroP = document.querySelector('.hero-section p');
                 if (heroP) heroP.innerText = `I'm an ${profile.title} based in ${profile.address}.`;
 
@@ -60,10 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Render Experience (Desc. Bootstrap Vertical Timeline)
                 const expContainer = document.getElementById('experiencecarousel');
                 if (expContainer && data.experience_list) {
-                    expContainer.className = ''; 
+                    expContainer.className = '';
                     expContainer.innerHTML = '<div class="education-timeline" id="experience-education-style-timeline"></div>';
                     const timeline = expContainer.querySelector('#experience-education-style-timeline');
-                    
+
                     // Sort Descending (Newest First -> "motu upar")
                     const getYearMonth = (periodStr) => {
                         if (!periodStr) return { year: 0, month: 0 };
@@ -101,20 +101,20 @@ document.addEventListener('DOMContentLoaded', function() {
                                 };
                                 const startD = parseDate(parts[0]);
                                 const endD = parseDate(parts[1]);
-                                
+
                                 if (startD && endD) {
                                     let totalMonths = (endD.getFullYear() - startD.getFullYear()) * 12 + (endD.getMonth() - startD.getMonth());
-                                    
+
                                     if (totalMonths <= 0) totalMonths = 1; // Minimum 1 month
-                                    
+
                                     const y = Math.floor(totalMonths / 12);
                                     const m = totalMonths % 12;
-                                    
+
                                     if (y > 0) durationStr += `${y} yr${y > 1 ? 's' : ''} `;
                                     if (m > 0 || (y === 0 && m > 0)) durationStr += `${m} mo${m > 1 ? 's' : ''}`;
                                 }
                             }
-                        } catch(e) {
+                        } catch (e) {
                             console.warn("Date calculation err:", e);
                         }
 
@@ -198,14 +198,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Header Img (Row 1)
                     document.getElementById('v-header-img').src = proj.header_img || '';
-                    
+
                     // Name (Row 2)
                     document.getElementById('v-name').innerText = proj.name;
 
                     // Tags (Row 3)
                     const tagsList = proj.tags ? proj.tags.split(',') : [];
-                    document.getElementById('v-tags').innerHTML = tagsList.map(t => 
-                        `<span class="badge rounded-pill bg-primary bg-opacity-10 text-primary p-2 px-3 mx-1 mb-2" style="font-size: 12px; border: 1px solid rgba(13, 110, 253, 0.2);">${t.trim()}</span>`
+                    document.getElementById('v-tags').innerHTML = tagsList.map(t =>
+                        `<span class="badge rounded-pill bg-primary bg-opacity-10 p-2 px-3 mx-1 mb-2" style="color:white; font-size: 12px; border: 1px solid rgba(13, 110, 253, 0.2);">${t.trim()}</span>`
                     ).join('');
 
                     // Short Desc (Row 4)
@@ -222,9 +222,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         imgs.forEach(imgUrl => {
                             if (!imgUrl.trim()) return;
                             const galCol = `
-                                <div class="col-12 col-md-6 col-lg-4">
-                                    <div class="ratio ratio-4x3 mb-3" style="cursor: zoom-in;" onclick="showBigImg('${imgUrl.trim()}')">
-                                        <img src="${imgUrl.trim()}" class="img-fluid rounded-4 shadow-sm object-fit-cover border border-light border-opacity-10">
+                                <div class="col-12 mb-4 text-center">
+                                    <div class="shadow-lg rounded-4 overflow-hidden border border-light border-opacity-10 d-inline-block" 
+                                         style="cursor: zoom-in; max-width: 100%;" 
+                                         onclick="showBigImg('${imgUrl.trim()}')">
+                                        <img src="${imgUrl.trim()}" class="img-fluid" style="max-height: 80vh; width: auto;">
                                     </div>
                                 </div>
                             `;
@@ -235,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // UI Toggle
                     document.getElementById('work-content').style.display = 'none';
                     document.getElementById('project-view').style.display = 'block';
-                    
+
                     // Scroll to top of section
                     document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
                 };
