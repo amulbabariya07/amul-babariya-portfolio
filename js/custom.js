@@ -194,13 +194,47 @@ $(function() {
         };
 
         try {
+            // 1. Fetch SMTP Config from Firebase
+            const configResp = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/smtp_config.json');
+            const smtpConfig = await configResp.json();
+
+            // 2. Save to Firebase (Backup)
             const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/messages.json', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
             
-            if(!response.ok) throw new Error("Firebase error (Check Security Rules)");
+            if(!response.ok) throw new Error("Firebase error");
+
+            // 3. Send Email via SMTP (SmtpJS)
+            if (smtpConfig && smtpConfig.user && smtpConfig.pass) {
+                if (typeof window.Email !== 'undefined') {
+                    window.Email.send({
+                        Host : smtpConfig.host || "smtp.gmail.com",
+                        Username : smtpConfig.user,
+                        Password : smtpConfig.pass,
+                        To : smtpConfig.to || smtpConfig.user,
+                        From : smtpConfig.user,
+                        Subject : "New Portfolio Inquiry: " + subject,
+                        Body : `
+                            <h3>New Message from ${name}</h3>
+                            <p><b>Email:</b> ${email}</p>
+                            <p><b>Phone:</b> ${phone}</p>
+                            <p><b>Subject:</b> ${subject}</p>
+                            <p><b>Message:</b><br>${message}</p>
+                            <hr>
+                            <p>Sent from your Portfolio Website</p>
+                        `
+                    }).then(msg => {
+                        if (msg !== "OK") console.warn("Email warning:", msg);
+                    });
+                } else {
+                    console.warn("SmtpJS not loaded. Email skip.");
+                }
+            } else {
+                console.warn("SMTP Config missing or incomplete. Email not sent.");
+            }
 
             // Show Popup
             alert("Thanks " + name + "! Your message has been sent successfully.");
