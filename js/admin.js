@@ -329,13 +329,42 @@ document.addEventListener('DOMContentLoaded', function () {
         const files = ev.target.files;
         if (!files.length) return;
         
-        const promises = Array.from(files).map(file => {
+        const resizeImage = (file) => {
             return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const max_size = 1000; // Max dimension
+
+                        if (width > height) {
+                            if (width > max_size) {
+                                height *= max_size / width;
+                                width = max_size;
+                            }
+                        } else {
+                            if (height > max_size) {
+                                width *= max_size / height;
+                                height = max_size;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compress as JPEG
+                    };
+                    img.src = e.target.result;
+                };
                 reader.readAsDataURL(file);
             });
-        });
+        };
+
+        const promises = Array.from(files).map(file => resizeImage(file));
 
         Promise.all(promises).then(results => {
             if (field === 'gallery_imgs') {
@@ -345,7 +374,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 adminData.portfolio[i][field] = results[0];
             }
             markUnsaved();
-            // Re-render only the form to stay on the same page
             openProjectForm(i);
         });
     };
@@ -625,7 +653,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw new Error("Permission Denied: Firebase rules rejected the update.");
                 }
 
-                localStorage.setItem('portfolio_data_cache', JSON.stringify(adminData));
+                try {
+                    localStorage.setItem('portfolio_data_cache', JSON.stringify(adminData));
+                } catch (e) {
+                    console.warn("Local storage quota exceeded. Changes saved to Firebase but not cached locally.", e);
+                }
                 hasUnsavedChanges = false;
                 syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-save"></i> Firebase Updated!</span>';
                 showNotification("Success: Data saved LIVE to Firebase! 🚀");
