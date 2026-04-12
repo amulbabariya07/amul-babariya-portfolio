@@ -93,7 +93,7 @@ body.index #wrapper { overflow: hidden; } body:not(.index) #wrapper {
 }
 
 .heading h2 {
-    margin: 40px 0;
+    margin: 20px 0;
     font-size: 80px;
     line-height: 80px;
     text-transform: capitalize;
@@ -102,6 +102,41 @@ body.index #wrapper { overflow: hidden; } body:not(.index) #wrapper {
     z-index: 0;
     display: inline-block;
     font-family: "Times New Roman", Times, serif;
+}
+
+/* Portfolio Filters */
+.portfolio-filters ul li {
+    padding: 8px 20px;
+    margin: 5px;
+    cursor: pointer;
+    background: #f0f0f0;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.portfolio-filters ul li:hover,
+.portfolio-filters ul li.active {
+    background: #383838;
+    color: #fff;
+}
+
+body.dark .portfolio-filters ul li {
+    background: #383838;
+    color: #eee;
+}
+
+body.dark .portfolio-filters ul li:hover,
+body.dark .portfolio-filters ul li.active {
+    background: #fff;
+    color: #383838;
+}
+
+.grid__item.hide {
+    display: none !important;
 }
 
 a {

@@ -76,11 +76,13 @@ $(function() {
             if (page != "#home") {
                 setTimeout(function () {
                     $('#wrapper').css('overflow','auto');
+                    $('body').css('overflow', 'auto');
                     $( ".simplebar-content-wrapper" ).css('overflow', 'auto');
                 }, 1000);
             } else {
                 setTimeout(function () {
                     $('#wrapper').css('overflow','hidden');
+                    $('body').css('overflow', 'hidden');
                     $( ".simplebar-content-wrapper" ).css('overflow', 'hidden');
                 }, 1000);
             }
@@ -229,8 +231,76 @@ $(function() {
         return false;
     });
 
+    /* ----------------------------------------------------------- */
+    /*  PORTFOLIO TAG FILTERING
+    /* ----------------------------------------------------------- */
+
+    function initPortfolioFilters() {
+        const grid = document.querySelector('.grid');
+        if (!grid) return;
+
+        const items = grid.querySelectorAll('.grid__item');
+        const tagsContainer = document.getElementById('portfolio-tags');
+        if (!tagsContainer) return;
+
+        // Collect unique tags
+        const tags = new Set();
+        items.forEach(item => {
+            const cat = item.querySelector('a').getAttribute('data-category');
+            if (cat) {
+                // Split by comma if multiple tags exist
+                cat.split(',').forEach(c => tags.add(c.trim().toLowerCase()));
+            }
+        });
+
+        // Populate UI
+        tags.forEach(tag => {
+            const li = document.createElement('li');
+            li.className = 'list-inline-item';
+            li.setAttribute('data-filter', tag);
+            li.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+            tagsContainer.appendChild(li);
+        });
+
+        // Filter Logic
+        const filterLinks = tagsContainer.querySelectorAll('li');
+        filterLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const filterValue = this.getAttribute('data-filter');
+                
+                // UI Update
+                filterLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // Item Filtering
+                items.forEach(item => {
+                    const itemCat = item.querySelector('a').getAttribute('data-category').trim().toLowerCase();
+                    if (filterValue === 'all' || itemCat.includes(filterValue)) {
+                        item.classList.remove('hide');
+                        $(item).fadeIn(400);
+                    } else {
+                        item.classList.add('hide');
+                        $(item).fadeOut(400);
+                    }
+                });
+
+                // Re-layout Masonry after animation
+                setTimeout(() => {
+                    try {
+                        const msnry = Masonry.data(grid);
+                        if (msnry) msnry.layout();
+                        window.dispatchEvent(new Event('resize'));
+                    } catch(e) {}
+                }, 500);
+            });
+        });
+    }
+
     $(window).on("load", function() {
         $("body").addClass("loaded");
+        
+        // Initialize Portfolio Filters
+        initPortfolioFilters();
         
         if ($("body").hasClass("index")) {
             // Initial Section and Overflow handling
@@ -253,9 +323,11 @@ $(function() {
 
                 if (hash === "" || hash === "#home") {
                     $('#wrapper').css('overflow', 'hidden');
+                    $('body').css('overflow', 'hidden');
                     $( ".simplebar-content-wrapper" ).css('overflow', 'hidden');
                 } else {
                     $('#wrapper').css('overflow', 'auto');
+                    $('body').css('overflow', 'auto');
                     $( ".simplebar-content-wrapper" ).css('overflow', 'auto');
                 }
             } else {
@@ -268,6 +340,7 @@ $(function() {
                 if (homeSec) homeSec.style.display = 'block';
 
                 $('#wrapper').css('overflow', 'hidden');
+                $('body').css('overflow', 'hidden');
                 $( ".simplebar-content-wrapper" ).css('overflow', 'hidden');
             }
         }

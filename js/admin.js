@@ -412,6 +412,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <h6 class="fw-bold mb-1">${m.subject || "No Subject"}</h6>
                 <p class="text-muted small mb-1"><i class="fa fa-user me-1"></i> ${m.name}</p>
+                <p class="text-secondary small mb-1"><i class="fa fa-envelope me-1"></i> ${m.email || 'N/A'}</p>
                 <p class="text-primary small mb-2"><i class="fa fa-phone me-1"></i> ${m.phone || 'N/A'}</p>
                 <p class="small mb-0 text-truncate">${m.message}</p>
             `;

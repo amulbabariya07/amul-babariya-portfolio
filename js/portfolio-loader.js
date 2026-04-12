@@ -165,29 +165,66 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Render Portfolio (Odoo App Store Style)
                 const portfolioGrid = document.getElementById('portfolio-grid');
+                const portfolioTagsUl = document.getElementById('portfolio-tags');
+
                 if (portfolioGrid && data.portfolio) {
-                    portfolioGrid.innerHTML = '';
-                    data.portfolio.forEach((proj, index) => {
-                        const tagsList = proj.tags ? proj.tags.split(',') : [];
-                        const colHtml = `
-                            <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-stretch">
-                                <div class="card bg-white border-0 w-100 shadow-sm rounded-4 overflow-hidden project-card-odoo" 
-                                     style="cursor: pointer; transition: transform 0.3s ease;" 
-                                     onclick="showProjectView(${index})">
-                                    <div style="height: 140px; overflow: hidden; background: #f8f9fa;">
-                                        <img src="${proj.header_img || ''}" class="w-100 h-100" style="object-fit: cover; object-position: top;" alt="${proj.name}">
-                                    </div>
-                                    <div class="card-body p-3 text-start">
-                                        <h6 class="card-title text-dark fw-bold mb-2 text-truncate" style="font-size: 13px;">${proj.name}</h6>
-                                        <div class="d-flex flex-wrap gap-1">
-                                            ${tagsList.map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 fw-normal mr-1 p-1" style="font-size: 9px; color: white;">${t.trim()}</span>`).join('') || ''}
+                    const allProjs = data.portfolio;
+
+                    // Tag Filter Logic
+                    if (portfolioTagsUl) {
+                        const tagsSet = new Set();
+                        allProjs.forEach(p => {
+                            if (p.tags) p.tags.split(',').forEach(t => tagsSet.add(t.trim().toLowerCase()));
+                        });
+
+                        portfolioTagsUl.innerHTML = '<li class="list-inline-item active" data-filter="all">All</li>';
+                        tagsSet.forEach(tag => {
+                            const li = document.createElement('li');
+                            li.className = 'list-inline-item';
+                            li.setAttribute('data-filter', tag);
+                            li.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+                            li.onclick = () => filterByTag(tag, li);
+                            portfolioTagsUl.appendChild(li);
+                        });
+                        // Add click for "All"
+                        portfolioTagsUl.querySelector('[data-filter="all"]').onclick = (e) => filterByTag('all', e.target);
+                    }
+
+                    const renderFiltered = (filter) => {
+                        portfolioGrid.innerHTML = '';
+                        allProjs.forEach((proj, index) => {
+                            const pTags = proj.tags ? proj.tags.toLowerCase() : '';
+                            if (filter === 'all' || pTags.includes(filter)) {
+                                const tagsList = proj.tags ? proj.tags.split(',') : [];
+                                const colHtml = `
+                                    <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-stretch project-item-anim">
+                                        <div class="card bg-white border-0 w-100 shadow-sm rounded-4 overflow-hidden project-card-odoo" 
+                                             style="cursor: pointer; transition: transform 0.3s ease;" 
+                                             onclick="showProjectView(${index})">
+                                            <div style="height: 140px; overflow: hidden; background: #f8f9fa;">
+                                                <img src="${proj.header_img || ''}" class="w-100 h-100" style="object-fit: cover; object-position: top;" alt="${proj.name}">
+                                            </div>
+                                            <div class="card-body p-3 text-start">
+                                                <h6 class="card-title text-dark fw-bold mb-2 text-truncate" style="font-size: 13px;">${proj.name}</h6>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    ${tagsList.map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 fw-normal mr-1 p-1" style="font-size: 9px; color: #f9f9f9ff;">${t.trim()}</span>`).join('') || ''}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        `;
-                        portfolioGrid.insertAdjacentHTML('beforeend', colHtml);
-                    });
+                                `;
+                                portfolioGrid.insertAdjacentHTML('beforeend', colHtml);
+                            }
+                        });
+                    };
+
+                    const filterByTag = (tag, el) => {
+                        portfolioTagsUl.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                        el.classList.add('active');
+                        renderFiltered(tag);
+                    };
+
+                    renderFiltered('all');
                     window._portfolio_data = data.portfolio;
                 }
 
