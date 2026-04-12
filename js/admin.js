@@ -197,17 +197,17 @@ document.addEventListener('DOMContentLoaded', function () {
         kanbanList.innerHTML = '';
         adminData.portfolio.forEach((proj, index) => {
             const card = document.createElement('div');
-            card.className = 'col-md-4 col-sm-6 mb-4';
+            card.className = 'col-6 col-md-4 col-lg-3 mb-4 d-flex';
             card.innerHTML = `
-                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden project-kanban-card" 
+                <div class="card w-100 border-0 shadow-sm rounded-4 overflow-hidden project-kanban-card" 
                      style="cursor: pointer; transition: transform 0.2s;" 
                      onclick="openProjectForm(${index})">
-                    <div class="ratio ratio-16x9 bg-light">
-                        ${proj.header_img ? `<img src="${proj.header_img}" class="object-fit-cover">` : '<div class="d-flex align-items-center justify-content-center text-muted small">No Image</div>'}
+                    <div style="height: 160px; overflow: hidden; background: #f8f9fa;">
+                        ${proj.header_img ? `<img src="${proj.header_img}" class="w-100 h-100" style="object-fit: cover; object-position: top;">` : '<div class="d-flex align-items-center justify-content-center text-muted small h-100">No Image</div>'}
                     </div>
-                    <div class="card-body p-3">
-                        <h6 class="fw-bold text-dark text-truncate mb-1">${proj.name || 'Untitled'}</h6>
-                        <p class="text-muted small mb-0 text-truncate" style="font-size: 11px;">${proj.short_desc || 'No description'}</p>
+                    <div class="card-body p-3 d-flex flex-column" style="height: 70px; overflow: hidden;">
+                        <h6 class="fw-bold text-dark text-truncate mb-1" style="font-size: 13px;">${proj.name || 'Untitled'}</h6>
+                        <p class="text-muted small mb-0 text-truncate" style="font-size: 10px;">${proj.short_desc || 'No description'}</p>
                     </div>
                 </div>`;
             kanbanList.appendChild(card);

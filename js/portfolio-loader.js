@@ -170,18 +170,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.portfolio.forEach((proj, index) => {
                         const tagsList = proj.tags ? proj.tags.split(',') : [];
                         const colHtml = `
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                                <div class="card bg-dark border-light border-opacity-10 h-100 shadow-sm rounded-4 overflow-hidden project-card-odoo" 
+                            <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-stretch">
+                                <div class="card bg-white border-0 w-100 shadow-sm rounded-4 overflow-hidden project-card-odoo" 
                                      style="cursor: pointer; transition: transform 0.3s ease;" 
                                      onclick="showProjectView(${index})">
-                                    <div class="ratio ratio-4x3">
-                                        <img src="${proj.header_img || ''}" class="card-img-top object-fit-cover" alt="${proj.name}">
+                                    <div style="height: 140px; overflow: hidden; background: #f8f9fa;">
+                                        <img src="${proj.header_img || ''}" class="w-100 h-100" style="object-fit: cover; object-position: top;" alt="${proj.name}">
                                     </div>
-                                    <div class="card-body p-3">
-                                        <h6 class="card-title text-white fw-bold mb-1 text-truncate">${proj.name}</h6>
-                                        <p class="card-text text-white-50 x-small mb-2" style="font-size: 11px; height: 32px; overflow: hidden;">${proj.short_desc || 'No description'}</p>
-                                        <div class="d-flex flex-wrap">
-                                            ${tagsList.slice(0, 2).map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 small me-2 mr-2" style="color: white; font-size: 9px;">${t.trim()}</span>`).join('')}
+                                    <div class="card-body p-3 text-start">
+                                        <h6 class="card-title text-dark fw-bold mb-2 text-truncate" style="font-size: 13px;">${proj.name}</h6>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            ${tagsList.map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 fw-normal mr-1 p-1" style="font-size: 9px; color: white;">${t.trim()}</span>`).join('') || ''}
                                         </div>
                                     </div>
                                 </div>
