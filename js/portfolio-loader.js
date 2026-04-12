@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <h6 class="card-title text-white fw-bold mb-1 text-truncate">${proj.name}</h6>
                                         <p class="card-text text-white-50 x-small mb-2" style="font-size: 11px; height: 32px; overflow: hidden;">${proj.short_desc || 'No description'}</p>
                                         <div class="d-flex flex-wrap">
-                                            ${tagsList.slice(0, 2).map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 text-primary small me-1" style="font-size: 9px;">${t.trim()}</span>`).join('')}
+                                            ${tagsList.slice(0, 2).map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 small me-2 mr-2" style="color: white; font-size: 9px;">${t.trim()}</span>`).join('')}
                                         </div>
                                     </div>
                                 </div>

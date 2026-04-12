@@ -186,76 +186,143 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const renderPortfolio = () => {
-        const portList = document.getElementById('portfolio-list');
-        if (!portList) return;
+        const kanbanList = document.getElementById('portfolio-kanban-list');
+        const kanbanHeader = document.getElementById('portfolio-kanban-header');
+        const formView = document.getElementById('portfolio-form-view');
+        
+        if (!kanbanList) return;
         if (!adminData.portfolio) adminData.portfolio = [];
         
-        portList.innerHTML = '';
+        // Ensure we are in Kanban View by default during render
+        kanbanList.innerHTML = '';
         adminData.portfolio.forEach((proj, index) => {
-            const col = document.createElement('div');
-            col.className = 'col-md-12';
-            col.innerHTML = `
-                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 position-relative">
-                    <button class="btn btn-outline-danger position-absolute top-0 end-0 m-3 border-0" onclick="rmProject(${index})"><i class="fa fa-trash"></i></button>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Project Name</label>
-                            <input type="text" class="form-control mb-3" value="${proj.name || ''}" oninput="updateProject(${index}, 'name', this.value)">
-                            
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Header Img</label>
-                                <div class="input-group">
-                                    <input type="text" id="p-img-${index}" class="form-control" placeholder="URL or Base64" value="${proj.header_img || ''}" oninput="updateProject(${index}, 'header_img', this.value)">
-                                    <input type="file" class="d-none" id="f-img-${index}" accept="image/*" onchange="upImg(event, ${index}, 'header_img')">
-                                    <button class="btn btn-outline-primary" onclick="document.getElementById('f-img-${index}').click()"><i class="fa fa-upload"></i></button>
-                                </div>
-                                <div class="mt-2 text-center" style="height: 60px; overflow: hidden; background: #f8f9fa; border-radius: 8px;">
-                                    ${proj.header_img ? `<img src="${proj.header_img}" style="height: 100%; object-fit: contain;">` : '<small class="text-muted" style="line-height: 60px;">No preview</small>'}
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold text-muted text-uppercase d-flex justify-content-between">
-                                    Multiple Img (Gallery)
-                                    <a href="javascript:void(0)" class="text-danger x-small" onclick="clearGal(${index})">Clear All</a>
-                                </label>
-                                <textarea id="p-gal-${index}" class="form-control mb-2" rows="2" placeholder="URLs separated by |" oninput="updateProject(${index}, 'gallery_imgs', this.value)">${proj.gallery_imgs || ''}</textarea>
-                                <input type="file" class="d-none" id="f-gal-${index}" accept="image/*" multiple onchange="upImg(event, ${index}, 'gallery_imgs')">
-                                <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="document.getElementById('f-gal-${index}').click()"><i class="fa fa-plus me-1"></i> Upload Gallery Files</button>
-                                
-                                <div class="d-flex flex-wrap gap-2 p-2 bg-light rounded-3" id="gal-prev-${index}" style="min-height: 50px;">
-                                    ${(proj.gallery_imgs || '').split('|').filter(img => img.trim()).map(img => `
-                                        <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 6px; border: 1px solid #dee2e6;">
-                                            <img src="${img.trim()}" style="width: 100%; height: 100%; object-fit: cover;">
-                                        </div>
-                                    `).join('') || '<small class="text-muted m-auto">No gallery images</small>'}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Short Description</label>
-                            <input type="text" class="form-control mb-3" value="${proj.short_desc || ''}" oninput="updateProject(${index}, 'short_desc', this.value)">
-
-                            <label class="form-label small fw-bold text-muted text-uppercase">Tags (e.g. Odoo, Python)</label>
-                            <input type="text" class="form-control mb-3" value="${proj.tags || ''}" oninput="updateProject(${index}, 'tags', this.value)">
-
-                            <label class="form-label small fw-bold text-muted text-uppercase">Details</label>
-                            <textarea class="form-control mb-3" rows="8" oninput="updateProject(${index}, 'details', this.value)">${proj.details || ''}</textarea>
-                        </div>
+            const card = document.createElement('div');
+            card.className = 'col-md-4 col-sm-6 mb-4';
+            card.innerHTML = `
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden project-kanban-card" 
+                     style="cursor: pointer; transition: transform 0.2s;" 
+                     onclick="openProjectForm(${index})">
+                    <div class="ratio ratio-16x9 bg-light">
+                        ${proj.header_img ? `<img src="${proj.header_img}" class="object-fit-cover">` : '<div class="d-flex align-items-center justify-content-center text-muted small">No Image</div>'}
+                    </div>
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold text-dark text-truncate mb-1">${proj.name || 'Untitled'}</h6>
+                        <p class="text-muted small mb-0 text-truncate" style="font-size: 11px;">${proj.short_desc || 'No description'}</p>
                     </div>
                 </div>`;
-            portList.appendChild(col);
+            kanbanList.appendChild(card);
         });
     };
 
+    window.openProjectForm = (index) => {
+        const proj = adminData.portfolio[index];
+        const kanbanList = document.getElementById('portfolio-kanban-list');
+        const kanbanHeader = document.getElementById('portfolio-kanban-header');
+        const formView = document.getElementById('portfolio-form-view');
+        const formContent = document.getElementById('portfolio-form-content');
+        const formTitle = document.getElementById('form-title-area');
+
+        formTitle.innerText = proj.name || 'Edit Project';
+        kanbanList.classList.add('d-none');
+        kanbanHeader.classList.add('d-none');
+        formView.classList.remove('d-none');
+
+        formContent.innerHTML = `
+            <div class="row g-4 mt-1">
+                <div class="col-md-7">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Project Name</label>
+                        <input type="text" class="form-control form-control-lg fw-bold" value="${proj.name || ''}" 
+                               oninput="updateProject(${index}, 'name', this.value); document.getElementById('form-title-area').innerText = this.value">
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Short Description</label>
+                            <input type="text" class="form-control" value="${proj.short_desc || ''}" oninput="updateProject(${index}, 'short_desc', this.value)">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Tags (Comma separated)</label>
+                            <input type="text" class="form-control" value="${proj.tags || ''}" oninput="updateProject(${index}, 'tags', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Details</label>
+                        <textarea class="form-control" rows="10" oninput="updateProject(${index}, 'details', this.value)">${proj.details || ''}</textarea>
+                    </div>
+
+                    <button class="btn btn-danger btn-sm rounded-pill px-3" onclick="rmProject(${index})">
+                        <i class="fa fa-trash me-1"></i> Delete Project
+                    </button>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Header Image</label>
+                        <div class="p-3 border rounded-4 bg-light text-center border-dashed">
+                            <input type="hidden" id="p-img-${index}" value="${proj.header_img || ''}">
+                            <input type="file" class="d-none" id="f-img-${index}" accept="image/*" onchange="upImg(event, ${index}, 'header_img')">
+                            <button class="btn btn-outline-primary btn-sm rounded-pill mb-3" onclick="document.getElementById('f-img-${index}').click()">
+                                <i class="fa fa-upload me-2"></i> Change Image
+                            </button>
+                            <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-white shadow-sm border">
+                                ${proj.header_img ? `<img id="prev-header-${index}" src="${proj.header_img}" class="object-fit-contain">` : '<div class="d-flex align-items-center justify-content-center text-muted small">Primary Photo</div>'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase d-flex justify-content-between">
+                            Gallery
+                            <a href="javascript:void(0)" class="text-danger x-small" onclick="clearGal(${index})">Clear Gallery</a>
+                        </label>
+                        <div class="p-3 border rounded-4 bg-light border-dashed">
+                            <input type="hidden" id="p-gal-${index}" value="${proj.gallery_imgs || ''}">
+                            <input type="file" class="d-none" id="f-gal-${index}" accept="image/*" multiple onchange="upImg(event, ${index}, 'gallery_imgs')">
+                            <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill mb-3" onclick="document.getElementById('f-gal-${index}').click()">
+                                <i class="fa fa-plus me-2"></i> Add Gallery Photos
+                            </button>
+                            <div class="row g-2" id="gal-prev-${index}">
+                                ${(proj.gallery_imgs || '').split('|').filter(img => img.trim()).map(img => `
+                                    <div class="col-4">
+                                        <div class="ratio ratio-1x1 rounded-3 overflow-hidden border bg-white">
+                                            <img src="${img.trim()}" class="object-fit-cover">
+                                        </div>
+                                    </div>
+                                `).join('') || '<div class="col-12 text-center text-muted x-small py-4">Gallery is empty</div>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    window.closeProjectForm = () => {
+        document.getElementById('portfolio-kanban-list').classList.remove('d-none');
+        document.getElementById('portfolio-kanban-header').classList.remove('d-none');
+        document.getElementById('portfolio-form-view').classList.add('d-none');
+        renderPortfolio();
+    };
+
     window.updateProject = (i, f, v) => { adminData.portfolio[i][f] = v; markUnsaved(); };
-    window.clearGal = (i) => { adminData.portfolio[i].gallery_imgs = ''; markUnsaved(); renderEverything(); };
-    window.rmProject = (i) => { adminData.portfolio.splice(i, 1); markUnsaved(); renderEverything(); };
+    window.clearGal = (i) => { adminData.portfolio[i].gallery_imgs = ''; markUnsaved(); openProjectForm(i); };
+    window.rmProject = (i) => { 
+        if(confirm('Are you sure you want to delete this project?')) {
+            adminData.portfolio.splice(i, 1); 
+            markUnsaved(); 
+            closeProjectForm(); 
+        }
+    };
+
     const addProjBtn = document.getElementById('add-project-btn');
     if (addProjBtn) addProjBtn.onclick = () => {
         if (!adminData.portfolio) adminData.portfolio = [];
+        const newIdx = adminData.portfolio.length;
         adminData.portfolio.push({ name: 'New Project', header_img: '', gallery_imgs: '', short_desc: '', details: '', tags: '' });
-        markUnsaved(); renderEverything();
+        markUnsaved();
+        openProjectForm(newIdx);
     };
 
     window.upImg = (ev, i, field) => {
@@ -278,7 +345,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 adminData.portfolio[i][field] = results[0];
             }
             markUnsaved();
-            renderEverything();
+            // Re-render only the form to stay on the same page
+            openProjectForm(i);
         });
     };
 
@@ -535,7 +603,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
                 const idToken = localStorage.getItem('fb_id_token');
-                const url = `https://amul-portfolio-default-rtdb.firebaseio.com/.json` + (idToken ? `?auth=${idToken}` : '');
+                if (!idToken) {
+                    showNotification("Error: You are not logged in! Please Logout and Login again.");
+                    return;
+                }
+                
+                const url = `https://amul-portfolio-default-rtdb.firebaseio.com/.json?auth=${idToken}`;
                 
                 const r = await fetch(url, {
                     method: 'PUT',
@@ -543,8 +616,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     body: JSON.stringify(adminData)
                 });
 
+                if (r.status === 401) {
+                    throw new Error("Unauthorized: Your session has expired. Please Logout and Login again.");
+                }
+
                 if (!r.ok) {
-                    throw new Error("Permission Denied (Firebase Rule)");
+                    throw new Error("Permission Denied: Firebase rules rejected the update.");
                 }
 
                 localStorage.setItem('portfolio_data_cache', JSON.stringify(adminData));
@@ -553,7 +630,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showNotification("Success: Data saved LIVE to Firebase! 🚀");
             } catch(e) {
                 console.error("Save failed:", e);
-                showNotification("Permission Denied: Could not write to Firebase.");
+                showNotification(e.message || "Permission Denied: Could not write to Firebase.");
             }
         };
     }
