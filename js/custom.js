@@ -76,10 +76,12 @@ $(function() {
             if (page != "#home") {
                 setTimeout(function () {
                     $('#wrapper').css('overflow','auto');
+                    $( ".simplebar-content-wrapper" ).css('overflow', 'auto');
                 }, 1000);
             } else {
                 setTimeout(function () {
                     $('#wrapper').css('overflow','hidden');
+                    $( ".simplebar-content-wrapper" ).css('overflow', 'hidden');
                 }, 1000);
             }
             function transitionblock() {
@@ -91,21 +93,29 @@ $(function() {
             transitionblock()
             function changepage() {
                 var pages = links.map(a => a.getAttribute("href"))
-                if ($(window).width() > 991) {
-                    setTimeout(function () {
-                        pages.forEach(a => document.querySelector(a).style.display = 'none');
-                        document.querySelector(page).style.display = 'block';
-                        $( ".simplebar-content-wrapper" ).scrollTop(0);
-
-                    }, 1000);
-                } else {
-                    setTimeout(function () {
-                        pages.forEach(a => document.querySelector(a).style.display = 'none');
-                        document.querySelector(page).style.display = 'block';
-                        $("#wrapper").scrollTop(0);
-
-                    }, 1000);
-                }
+                setTimeout(function () {
+                    pages.forEach(a => {
+                        const el = document.querySelector(a);
+                        if (el) el.style.display = 'none';
+                    });
+                    document.querySelector(page).style.display = 'block';
+                    
+                    // Reset scroll properly for window and simplebar
+                    window.scrollTo(0, 0);
+                    
+                    try {
+                        const wrapperDiv = document.querySelector('#wrapper');
+                        if (wrapperDiv && wrapperDiv.SimpleBar) {
+                            wrapperDiv.SimpleBar.getScrollElement().scrollTop = 0;
+                        } else {
+                            if (document.querySelector('.simplebar-content-wrapper')) {
+                                document.querySelector('.simplebar-content-wrapper').scrollTop = 0;
+                            }
+                            wrapperDiv.scrollTop = 0;
+                        }
+                    } catch(e) {}
+                    
+                }, 1000);
             }
             changepage()
         }
@@ -221,6 +231,46 @@ $(function() {
 
     $(window).on("load", function() {
         $("body").addClass("loaded");
+        
+        if ($("body").hasClass("index")) {
+            // Initial Section and Overflow handling
+            var hash = window.location.hash;
+            var links = [...document.querySelectorAll('.link-page')];
+            var pages = links.map(a => a.getAttribute("href"));
+
+            if (hash && pages.includes(hash)) {
+                // Hide all and show the hash specific sections
+                pages.forEach(a => {
+                    const el = document.querySelector(a);
+                    if (el) el.style.display = 'none';
+                });
+                const activeSection = document.querySelector(hash);
+                if (activeSection) activeSection.style.display = 'block';
+
+                // Update navigation active state
+                $('#main-navigation li a').removeClass('active');
+                $('#main-navigation li a[href="' + hash + '"]').addClass('active');
+
+                if (hash === "" || hash === "#home") {
+                    $('#wrapper').css('overflow', 'hidden');
+                    $( ".simplebar-content-wrapper" ).css('overflow', 'hidden');
+                } else {
+                    $('#wrapper').css('overflow', 'auto');
+                    $( ".simplebar-content-wrapper" ).css('overflow', 'auto');
+                }
+            } else {
+                // Default to Home visibility
+                pages.forEach(a => {
+                    const el = document.querySelector(a);
+                    if (el && a !== "#home") el.style.display = 'none';
+                });
+                const homeSec = document.querySelector("#home");
+                if (homeSec) homeSec.style.display = 'block';
+
+                $('#wrapper').css('overflow', 'hidden');
+                $( ".simplebar-content-wrapper" ).css('overflow', 'hidden');
+            }
+        }
     });
 
 
