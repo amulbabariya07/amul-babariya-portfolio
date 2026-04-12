@@ -25,12 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const globalSaveBtn = document.getElementById('global-save-btn');
     const rejectChangesBtn = document.getElementById('reject-changes-btn');
 
-    // Email Settings Fields
-    const smtpHost = document.getElementById('smtp-host');
-    const smtpUser = document.getElementById('smtp-user');
-    const smtpPass = document.getElementById('smtp-pass');
-    const smtpTo = document.getElementById('smtp-to');
-
     // Sidebar View Logic
     const navLinks = document.querySelectorAll('.nav-link');
     const viewSections = document.querySelectorAll('.view-section');
@@ -189,81 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderLanguages();
         renderPortfolio();
         renderMessages();
-        renderEmailSettings();
-    };
-
-    const renderEmailSettings = () => {
-        if (!adminData.smtp_config) adminData.smtp_config = {
-            host: "smtp.gmail.com",
-            user: "",
-            pass: "",
-            to: ""
-        };
-        
-        smtpHost.value = adminData.smtp_config.host || '';
-        smtpUser.value = adminData.smtp_config.user || '';
-        smtpPass.value = adminData.smtp_config.pass || '';
-        smtpTo.value = adminData.smtp_config.to || '';
-
-        // Add listeners for dirty state
-        [smtpHost, smtpUser, smtpPass, smtpTo].forEach(el => {
-            el.oninput = () => {
-                adminData.smtp_config.host = smtpHost.value;
-                adminData.smtp_config.user = smtpUser.value;
-                adminData.smtp_config.pass = smtpPass.value;
-                adminData.smtp_config.to = smtpTo.value;
-                markUnsaved();
-            };
-        });
-
-        // Test Connection Button
-        const testBtn = document.getElementById('test-smtp-btn');
-        if (testBtn) {
-            testBtn.onclick = async () => {
-                const host = smtpHost.value;
-                const user = smtpUser.value;
-                const pass = smtpPass.value;
-                const to = smtpTo.value;
-
-                if (!host || !user || !pass || !to) {
-                    alert("Please fill all fields before testing.");
-                    return;
-                }
-
-                testBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Testing...';
-                testBtn.disabled = true;
-
-                if (typeof window.Email === 'undefined') {
-                    alert("Error: The Email service (SmtpJS) could not be loaded. Please check your internet connection or disable ad-blockers and try again.");
-                    testBtn.innerHTML = '<i class="fa fa-paper-plane me-2"></i> Test Connection';
-                    testBtn.disabled = false;
-                    return;
-                }
-
-                try {
-                    const response = await window.Email.send({
-                        Host: host,
-                        Username: user,
-                        Password: pass,
-                        To: to,
-                        From: user,
-                        Subject: "Portfolio SMTP Test",
-                        Body: "Your connection is working perfectly! All messages from your portfolio will now be sent to this email."
-                    });
-
-                    if (response === "OK") {
-                        alert("Success! Connection works done. You should receive a test email shortly.");
-                    } else {
-                        alert("Connection Failed: " + response);
-                    }
-                } catch (err) {
-                    alert("Error: " + err.message);
-                } finally {
-                    testBtn.innerHTML = '<i class="fa fa-paper-plane me-2"></i> Test Connection';
-                    testBtn.disabled = false;
-                }
-            };
-        }
     };
 
     const renderPortfolio = () => {
@@ -681,13 +600,6 @@ document.addEventListener('DOMContentLoaded', function () {
             adminData.profile.address = addressText.value;
             adminData.stats.projects = statProjects.value;
             adminData.stats.customers = statCustomers.value;
-
-            // Email Config
-            if (!adminData.smtp_config) adminData.smtp_config = {};
-            adminData.smtp_config.host = smtpHost.value;
-            adminData.smtp_config.user = smtpUser.value;
-            adminData.smtp_config.pass = smtpPass.value;
-            adminData.smtp_config.to = smtpTo.value;
 
             try {
                 const idToken = localStorage.getItem('fb_id_token');
