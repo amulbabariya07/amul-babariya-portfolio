@@ -15,7 +15,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (el) el.innerText = value;
                 };
 
-                updateElement('bio-val', profile.bio);
+                const applyBootstrapToHtml = (container) => {
+                    if (!container) return;
+                    container.querySelectorAll('img').forEach(img => {
+                        img.classList.add('img-fluid', 'rounded-4', 'my-3', 'shadow-sm');
+                    });
+                    container.querySelectorAll('iframe').forEach(ifrm => {
+                        ifrm.classList.add('w-100', 'rounded-4', 'my-3');
+                        ifrm.style.aspectRatio = '16/9';
+                        ifrm.style.height = 'auto';
+                    });
+                };
+
+                const aboutText = document.getElementById('bio-val');
+                if (aboutText) {
+                    aboutText.innerHTML = data.profile.bio || '';
+                    aboutText.classList.add('text-white-50', 'lh-lg');
+                    applyBootstrapToHtml(aboutText);
+                }
+
                 updateElement('birthdate-val', profile.birthdate);
                 updateElement('experience-val', profile.experience);
                 updateElement('phone-val', profile.phone);
@@ -60,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Render Experience (Desc. Bootstrap Vertical Timeline)
                 const expContainer = document.getElementById('experiencecarousel');
                 if (expContainer && data.experience_list) {
-                    expContainer.className = '';
+                    expContainer.classList.add('position-relative');
                     expContainer.innerHTML = '<div class="education-timeline" id="experience-education-style-timeline"></div>';
                     const timeline = expContainer.querySelector('#experience-education-style-timeline');
 
@@ -132,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                             <i class="fa fa-chevron-down" style="font-size: 12px; transition: transform 0.3s ease;"></i>
                                         </button>
                                         <div class="simple-drawer mt-3" style="display: none; animation: fadeInDown 0.3s ease;">
-                                            <p style="opacity: 0.8; font-size: 15px; line-height: 1.6; margin-bottom: 0px; text-align: left;">${exp.description}</p>
+                                             <div class="text-white-50 lh-lg text-start small">${exp.description}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -145,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Render Education
                 const eduContainer = document.getElementById('education-hierarchy');
                 if (eduContainer && data.education_list) {
+                    eduContainer.classList.add('position-relative');
                     eduContainer.innerHTML = '<div class="education-timeline"></div>';
                     const timeline = eduContainer.querySelector('.education-timeline');
                     data.education_list.forEach((edu, index) => {
@@ -155,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <h5 class="mb-0">${edu.degree}</h5>
                                     <span class="date">${edu.period}</span>
                                     <span class="institution">${edu.institution}</span>
-                                    <p>${edu.description}</p>
+                                    <div class="text-white-50 lh-lg">${edu.description}</div>
                                 </div>
                             </div>
                         `;
@@ -197,11 +216,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (filter === 'all' || pTags.includes(filter)) {
                                 const tagsList = proj.tags ? proj.tags.split(',') : [];
                                 const colHtml = `
-                                    <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex align-items-stretch project-item-anim">
+                                    <div class="col-12 col-md-4 col-lg-3 mb-4 d-flex align-items-stretch project-item-anim">
                                         <div class="card bg-white border-0 w-100 shadow-sm rounded-4 overflow-hidden project-card-odoo" 
                                              style="cursor: pointer; transition: transform 0.3s ease;" 
                                              onclick="showProjectView(${index})">
-                                            <div style="height: 140px; overflow: hidden; background: #f8f9fa;">
+                                            <div class="project-img-container" style="height: 140px; overflow: hidden; background: #f8f9fa;">
                                                 <img src="${proj.header_img || ''}" class="w-100 h-100" style="object-fit: cover; object-position: top;" alt="${proj.name}">
                                             </div>
                                             <div class="card-body p-3 text-start bg-white">
@@ -248,7 +267,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('v-short-desc').innerText = proj.short_desc || '';
 
                     // Details (Row 5)
-                    document.getElementById('v-details').innerText = proj.details || '';
+                    const detailsContainer = document.getElementById('v-details');
+                    detailsContainer.innerHTML = proj.details || '';
+                    applyBootstrapToHtml(detailsContainer);
 
                     // Gallery (Row 6)
                     const galRow = document.getElementById('v-gallery-row');

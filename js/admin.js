@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const avatarTxt = document.getElementById('avatar-txt');
 
     // Form fields
-    const bioText = document.getElementById('bio-text');
+    const bioEditor = document.getElementById('bio-editor');
     const birthdateText = document.getElementById('birthdate-text');
     const experienceText = document.getElementById('experience-text');
     const phoneText = document.getElementById('phone-text');
@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const statCustomers = document.getElementById('stat-customers');
     const skillsList = document.getElementById('skills-list');
     const addSkillBtn = document.getElementById('add-skill-btn');
+    
+    // Quill Instance Holder
+    let bioQuill = null;
     
     // Buttons
     const syncFileBtn = document.getElementById('sync-file-btn');
@@ -67,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const markUnsaved = () => {
         if (!hasUnsavedChanges) {
             hasUnsavedChanges = true;
-            syncTextStatus.innerHTML = '<span style="color: #ff4d4d; font-weight: bold; animation: pulse 1.5s infinite;"><i class="fa fa-exclamation-triangle"></i> CHANGES NOT SYNCED TO FILE</span>';
+            syncTextStatus.innerHTML = '<span style="color: #ff4d4d; font-weight: bold; animation: pulse 1.5s infinite;"><i class="fa fa-exclamation-triangle"></i> CHANGES NOT SYNCED TO FIREBASE</span>';
         }
     };
 
@@ -86,7 +89,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (avatarTxt) avatarTxt.innerText = adminData.profile.name.charAt(0);
             
             // Personal Info
-            bioText.value = adminData.profile.bio || '';
+            if (bioQuill) {
+                bioQuill.root.innerHTML = adminData.profile.bio || '';
+            } else {
+                initBioQuill(adminData.profile.bio);
+            }
             birthdateText.value = adminData.profile.birthdate || '';
             experienceText.value = adminData.profile.experience || '';
             phoneText.value = adminData.profile.phone || '';
@@ -144,10 +151,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                     <div>
-                        <label class="form-label small fw-bold text-muted">Responsibilities</label>
-                        <textarea class="form-control" rows="3" oninput="updateExp(${index}, 'description', this.value)">${exp.description}</textarea>
+                        <label class="form-label small fw-bold text-muted">Responsibilities (Rich Text)</label>
+                        <div id="exp-editor-${index}" class="exp-editor"></div>
                     </div>`;
                 expList.appendChild(item);
+                initQuill(`exp-editor-${index}`, exp.description, (html) => {
+                    adminData.experience_list[index].description = html;
+                    markUnsaved();
+                });
             });
         }
 
@@ -174,15 +185,76 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                     <div>
-                        <label class="form-label small fw-bold text-muted">Description</label>
-                        <textarea class="form-control" rows="2" oninput="updateEdu(${index}, 'description', this.value)">${edu.description}</textarea>
+                        <label class="form-label small fw-bold text-muted">Description (Rich Text)</label>
+                        <div id="edu-editor-${index}" class="edu-editor"></div>
                     </div>`;
                 eduList.appendChild(item);
+                initQuill(`edu-editor-${index}`, edu.description, (html) => {
+                    adminData.education_list[index].description = html;
+                    markUnsaved();
+                });
             });
         }
         renderLanguages();
         renderPortfolio();
         renderMessages();
+    };
+    
+    // --- Quill Helper ---
+    const initQuill = (id, initialHtml, callback) => {
+        setTimeout(() => {
+            const container = document.getElementById(id);
+            if (!container) return;
+            const quill = new Quill(container, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        [{ 'font': [] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'align': [] }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                }
+            });
+            quill.root.innerHTML = initialHtml || '';
+            // Only listen for changes AFTER the initial content is set to avoid false "unsaved" warnings
+            setTimeout(() => {
+                quill.on('text-change', () => callback(quill.root.innerHTML));
+            }, 500);
+        }, 100);
+    };
+
+    const initBioQuill = (html) => {
+        const container = document.getElementById('bio-editor');
+        if (!container) return;
+        bioQuill = new Quill(container, {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'clean']
+                ]
+            }
+        });
+        bioQuill.root.innerHTML = html || '';
+        // Only listen for changes AFTER the initial content is set
+        setTimeout(() => {
+            bioQuill.on('text-change', () => {
+                adminData.profile.bio = bioQuill.root.innerHTML;
+                markUnsaved();
+            });
+        }, 500);
     };
 
     const renderPortfolio = () => {
@@ -206,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ${proj.header_img ? `<img src="${proj.header_img}" class="w-100 h-100" style="object-fit: cover; object-position: top;">` : '<div class="d-flex align-items-center justify-content-center text-muted small h-100">No Image</div>'}
                     </div>
                     <div class="card-body p-3 d-flex flex-column" style="height: 70px; overflow: hidden;">
+                        <div id="v-details" class="text-white-50 lh-lg" style="font-size: 17px; text-align: justify;"></div>
                         <h6 class="fw-bold text-dark text-truncate mb-1" style="font-size: 13px;">${proj.name || 'Untitled'}</h6>
                         <p class="text-muted small mb-0 text-truncate" style="font-size: 10px;">${proj.short_desc || 'No description'}</p>
                     </div>
@@ -248,8 +321,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-muted text-uppercase">Details</label>
-                        <textarea class="form-control" rows="10" oninput="updateProject(${index}, 'details', this.value)">${proj.details || ''}</textarea>
+                        <label class="form-label small fw-bold text-muted text-uppercase">Details (Rich Text)</label>
+                        <div id="proj-editor-${index}"></div>
                     </div>
 
                     <button class="btn btn-danger btn-sm rounded-pill px-3" onclick="rmProject(${index})">
@@ -297,6 +370,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         `;
+        initQuill(`proj-editor-${index}`, proj.details, (html) => {
+            adminData.portfolio[index].details = html;
+            markUnsaved();
+        });
     };
 
     window.closeProjectForm = () => {
@@ -622,7 +699,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!adminData) return;
 
             // Capture all fields
-            adminData.profile.bio = bioText.value;
+            adminData.profile.bio = bioEditor.innerHTML;
             adminData.profile.birthdate = birthdateText.value;
             adminData.profile.experience = experienceText.value;
             adminData.profile.phone = phoneText.value;
@@ -689,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    [bioText, birthdateText, experienceText, phoneText, addressText, statProjects, statCustomers].forEach(el => {
+    [bioEditor, birthdateText, experienceText, phoneText, addressText, statProjects, statCustomers].forEach(el => {
         if (el) el.oninput = () => markUnsaved();
     });
 
