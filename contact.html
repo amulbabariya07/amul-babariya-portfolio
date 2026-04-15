@@ -10,7 +10,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Template Google Font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 
     <!-- Template CSS Files -->
@@ -23,6 +25,7 @@
 
     <!-- CSS Skin File -->
     <link rel="stylesheet" href="css/skins/deeporange.css">
+    <link rel="stylesheet" href="css/modern-design.css">
 
     <!-- Modernizr JS File -->
     <script src="js/modernizr.js"></script>
@@ -49,7 +52,6 @@
                     <li><a href="index.html#about"><span class="material-icons">article</span>about</a></li>
                     <li><a href="index.html#work"><span class="material-icons">cases</span>portfolio</a></li>
                     <li><a href="contact.html" class="active"><span class="material-icons">email</span>contact</a></li>
-                    <li><a href="blog.html"><span class="material-icons">topic</span>blog</a></li>
                 </ul>
             </nav>
         </div>
@@ -59,65 +61,54 @@
         <div class="section contact-section" style="display: block;" id="contact">
             <div id="contact-content">
                 <!-- Heading Starts -->
-                <div class="heading text-left text-md-center m-5">
-                    <h2>
-                        get <span>in touch</span>
+                <div class="text-center mb-5 mt-5">
+                    <h2 class="display-3 fw-bold text-uppercase">
+                        get <span class="text-primary">in touch</span>
                     </h2>
                 </div>
                 <!-- Heading Ends -->
                 <div class="container">
                     <!-- Contact Boxes Starts -->
-                    <div class="row boxes">
-                        <!-- Contact Box Item Starts -->
-                        <div class="col-12 col-lg-4">
-                            <div class="box">
-                                <span class="material-icons">call</span>
-                                <p>+91 8320269460</p>
+                    <div class="row g-4 mb-5">
+                        <div class="col-12 col-md-4">
+                            <div class="p-4 rounded-4 shadow-sm border border-light border-opacity-10 bg-white bg-opacity-5 text-center">
+                                <span class="material-icons text-primary display-6 mb-3">call</span>
+                                <h5 class="fw-bold mb-0">+91 8320269460</h5>
                             </div>
                         </div>
-                        <!-- Contact Box Item Ends -->
-                        <!-- Contact Box Item Starts -->
-                        <div class="col-12 col-lg-4">
-                            <div class="box">
-                                <span class="material-icons">email</span>
-                                <p>amulbabariya07@gmail.com</p>
+                        <div class="col-12 col-md-4">
+                            <div class="p-4 rounded-4 shadow-sm border border-light border-opacity-10 bg-white bg-opacity-5 text-center">
+                                <span class="material-icons text-primary display-6 mb-3">email</span>
+                                <h5 class="fw-bold mb-0">amulbabariya07@gmail.com</h5>
                             </div>
                         </div>
-                        <!-- Contact Box Item Ends -->
-                        <!-- Contact Box Item Starts -->
-                        <div class="col-12 col-lg-4">
-                            <div class="box last-box">
-                                <span class="material-icons">location_on</span>
-
-                                <p>Junagadh, India 362610</p>
+                        <div class="col-12 col-md-4">
+                            <div class="p-4 rounded-4 shadow-sm border border-light border-opacity-10 bg-white bg-opacity-5 text-center">
+                                <span class="material-icons text-primary display-6 mb-3">location_on</span>
+                                <h5 class="fw-bold mb-0">Junagadh, India 362610</h5>
                             </div>
                         </div>
-                        <!-- Contact Box Item Ends -->
                     </div>
                     <!-- Contact Boxes Ends -->
                     <div class="separator"></div>
                     <!-- Contact Form Starts -->
-                    <div class="row">
-                        <div class="col-12 col-lg-4 leftside">
-                            <div>
-                                <h4 class="mb-0">send me an email</h4>
-                                <p>
+                    <div class="row g-5">
+                        <div class="col-12 col-lg-4">
+                            <div class="mb-5">
+                                <h4 class="text-uppercase fw-bold mb-3">Send me an email</h4>
+                                <p class="lead small">
                                     Feel free to get in touch with me. I am always open to discussing new projects or
                                     creative ideas.
                                 </p>
                             </div>
                             <div>
-                                <h4>follow me</h4>
+                                <h4 class="text-uppercase fw-bold mb-3">Follow me</h4>
                                 <!-- Social Media Starts -->
-                                <ul class="social list-unstyled mb-5 mb-lg-0 p-0 d-flex">
-                                    <li class="facebook"><a title="Facebook" href="#"><i class="fa fa-facebook"></i></a>
-                                    </li>
-                                    <li class="twitter"><a title="Twitter" href="#"><i class="fa fa-twitter"></i></a>
-                                    </li>
-                                    <li class="youtube"><a title="Linkedin" href="#"><i class="fa fa-linkedin"></i></a>
-                                    </li>
-                                    <li class="dribbble"><a title="behance" href="#"><i class="fa fa-behance"></i></a>
-                                    </li>
+                                <ul class="list-unstyled d-flex gap-3 p-0">
+                                    <li><a title="Facebook" href="#" class="btn btn-outline-light rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a title="Twitter" href="#" class="btn btn-outline-light rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a title="Linkedin" href="#" class="btn btn-outline-light rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a title="Behance" href="#" class="btn btn-outline-light rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fa fa-behance"></i></a></li>
                                 </ul>
                                 <!-- Social Media Ends -->
                             </div>
@@ -125,27 +116,23 @@
                         <div class="col-12 col-lg-8">
                             <form class="formcontact" method="post" action="#">
                                 <div class="row contactform">
-                                    <div class="col-12 col-md-6 mb-3">
-                                        <input type="text" id="contact-name" name="name" placeholder="YOUR NAME"
-                                            autocomplete="off" required>
+                                    <div class="col-12 col-md-6 mb-4">
+                                        <input type="text" id="contact-name" name="name" class="form-control bg-white bg-opacity-5 border-light border-opacity-10 text-white rounded-3 p-3" placeholder="YOUR NAME" autocomplete="off" required>
                                     </div>
-                                    <div class="col-12 col-md-6 mb-3">
-                                        <input type="email" id="contact-email" name="email" placeholder="YOUR EMAIL"
-                                            autocomplete="off">
+                                    <div class="col-12 col-md-6 mb-4">
+                                        <input type="email" id="contact-email" name="email" class="form-control bg-white bg-opacity-5 border-light border-opacity-10 text-white rounded-3 p-3" placeholder="YOUR EMAIL" autocomplete="off">
                                     </div>
-                                    <div class="col-12 col-md-6 mb-3">
-                                        <input type="text" id="contact-phone" name="phone" placeholder="YOUR MOBILE"
-                                            autocomplete="off">
+                                    <div class="col-12 col-md-6 mb-4">
+                                        <input type="text" id="contact-phone" name="phone" class="form-control bg-white bg-opacity-5 border-light border-opacity-10 text-white rounded-3 p-3" placeholder="YOUR MOBILE" autocomplete="off">
                                     </div>
-                                    <div class="col-12 col-md-6 mb-3">
-                                        <input type="text" id="contact-subject" name="subject" placeholder="SUBJECT"
-                                            autocomplete="off">
+                                    <div class="col-12 col-md-6 mb-4">
+                                        <input type="text" id="contact-subject" name="subject" class="form-control bg-white bg-opacity-5 border-light border-opacity-10 text-white rounded-3 p-3" placeholder="SUBJECT" autocomplete="off">
                                     </div>
-                                    <div class="col-12">
-                                        <textarea name="message" placeholder="YOUR MESSAGE"></textarea>
+                                    <div class="col-12 mb-4">
+                                        <textarea name="message" class="form-control bg-white bg-opacity-5 border-light border-opacity-10 text-white rounded-3 p-3" rows="5" placeholder="YOUR MESSAGE"></textarea>
                                     </div>
                                     <div class="col-12">
-                                        <button type="submit" class="btn main-btn"><span>Send Message</span></button>
+                                        <button type="submit" class="btn btn-primary px-5 py-3 rounded-3 shadow fw-bold text-uppercase"><span>Send Message</span></button>
                                     </div>
                                     <div class="col-12 form-message d-none">
                                         <span class="output_message text-center text-uppercase"></span>

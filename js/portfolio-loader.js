@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                             <div style="height: 140px; overflow: hidden; background: #f8f9fa;">
                                                 <img src="${proj.header_img || ''}" class="w-100 h-100" style="object-fit: cover; object-position: top;" alt="${proj.name}">
                                             </div>
-                                            <div class="card-body p-3 text-start">
+                                            <div class="card-body p-3 text-start bg-white">
                                                 <h6 class="card-title text-dark fw-bold mb-2 text-truncate" style="font-size: 13px;">${proj.name}</h6>
                                                 <div class="d-flex flex-wrap gap-1">
                                                     ${tagsList.map(t => `<span class="badge rounded-pill bg-primary bg-opacity-10 fw-normal mr-1 p-1" style="font-size: 9px; color: #f9f9f9ff;">${t.trim()}</span>`).join('') || ''}

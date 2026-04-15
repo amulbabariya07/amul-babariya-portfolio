@@ -10,7 +10,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Template Google Font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 
     <!-- Template CSS Files -->
@@ -23,6 +25,7 @@
 
     <!-- CSS Skin File -->
     <link rel="stylesheet" href="css/skins/deeporange.css">
+    <link rel="stylesheet" href="css/modern-design.css">
 
     <!-- Modernizr JS File -->
     <script src="js/modernizr.js"></script>
@@ -124,67 +127,89 @@
         </div>
         <!-- Home Section Ends -->
         <!-- About Section Starts -->
-        <div class="section about-section" id="about">
-            <div id="about-content">
+        <div class="section py-5 px-3" id="about">
+            <div id="about-content" class="container">
                 <!-- Heading Starts -->
-                <div class="heading text-left text-md-center">
-                    <h2>
-                        about <span>me</span>
+                <div class="text-center mb-5">
+                    <h2 class="display-3 fw-bold text-uppercase">
+                        about <span class="text-primary">me</span>
                     </h2>
                 </div>
                 <!-- Heading Ends -->
                 <!-- Personal Infos Starts -->
-                <div class="container infos">
-                    <div class="row infos-holder align-items-center">
+                <div class="infos mb-5">
+                    <div class="row align-items-center g-5">
                         <div class="col-12 col-lg-5">
-                            <img class="img-fluid d-block photo" src="images/amul_about_me.jpg" alt="Amul Babariya" />
+                            <img class="img-fluid rounded-4 shadow-lg photo" src="images/amul_about_me.jpg" alt="Amul Babariya" />
                         </div>
                         <div class="col-12 col-lg-7">
-                            <p class="m-0" id="bio-val">
+                            <p class="lead mb-4" id="bio-val">
                                 I'm Amul Babariya, Indian based web designer and front‑end developer living in Ahemdabad
                                 , Gujrat
                                 focused on crafting clean, creative and user‑friendly experiences, I build beautiful and
                                 powerful websites and android applications.
                             </p>
-                            <div class="row text-nowrap">
-                                <div class="d-flex col-12 col-sm-6 personal-list-container personal-list-container-1">
-                                    <ul class="list-unstyled personal-info w-100">
-                                        <li>
-                                            <p><span class="material-icons">cake</span><span>Birthdate : </span><span
-                                                    id="birthdate-val">May
-                                                    2004</span></p>
-                                        </li>
-                                        <li>
-                                            <p><span class="material-icons">flag</span><span>Nationality :
-                                                </span>Indian</p>
-                                        </li>
-                                        <li>
-                                            <p><span class="material-icons">settings</span><span>Experience :
-                                                </span><span id="experience-val">2
-                                                    years</span></p>
-                                        </li>
-                                    </ul>
+                            <div class="row g-4 mb-4">
+                                <div class="col-12 col-sm-6">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="text-primary me-3 d-flex align-items-center justify-content-center" style="width: 32px;">
+                                            <span class="material-icons" style="font-size: 24px;">cake</span>
+                                        </div>
+                                        <div class="border-start border-light border-opacity-10 ps-3 py-1">
+                                            <span class="d-block text-muted small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 1px;">Birthdate</span>
+                                            <span id="birthdate-val" class="text-white fw-bold small">May 2004</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="text-primary me-3 d-flex align-items-center justify-content-center" style="width: 32px;">
+                                            <span class="material-icons" style="font-size: 24px;">flag</span>
+                                        </div>
+                                        <div class="border-start border-light border-opacity-10 ps-3 py-1">
+                                            <span class="d-block text-muted small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 1px;">Nationality</span>
+                                            <span class="text-white fw-bold small">Indian</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="text-primary me-3 d-flex align-items-center justify-content-center" style="width: 32px;">
+                                            <span class="material-icons" style="font-size: 24px;">settings</span>
+                                        </div>
+                                        <div class="border-start border-light border-opacity-10 ps-3 py-1">
+                                            <span class="d-block text-muted small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 1px;">Experience</span>
+                                            <span id="experience-val" class="text-white fw-bold small">2 years</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="d-flex col-12 col-sm-6 personal-list-container personal-list-container-2">
-                                    <ul class="list-unstyled personal-info w-100">
-                                        <li>
-                                            <p><span class="material-icons">call</span><span>Phone : </span><span
-                                                    id="phone-val">+91
-                                                    8320269460</span>
-                                            </p>
-                                        </li>
-                                        <li>
-                                            <p><span class="material-icons">location_on</span><span>Address :
-                                                </span><span id="address-val">Ahemdabad , Gujrat</span></p>
-                                        </li>
-                                        <li>
-                                            <p><span class="material-icons">email</span><span>Email :
-                                                </span><span id="email-val">amulbabariya07@gmail.com</span></p>
-                                        </li>
-                                    </ul>
+                                <div class="col-12 col-sm-6">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="text-primary me-3 d-flex align-items-center justify-content-center" style="width: 32px;">
+                                            <span class="material-icons" style="font-size: 24px;">call</span>
+                                        </div>
+                                        <div class="border-start border-light border-opacity-10 ps-3 py-1">
+                                            <span class="d-block text-muted small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 1px;">Phone</span>
+                                            <span id="phone-val" class="text-white fw-bold small">+91 8320269460</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="text-primary me-3 d-flex align-items-center justify-content-center" style="width: 32px;">
+                                            <span class="material-icons" style="font-size: 24px;">location_on</span>
+                                        </div>
+                                        <div class="border-start border-light border-opacity-10 ps-3 py-1">
+                                            <span class="d-block text-muted small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 1px;">Address</span>
+                                            <span id="address-val" class="text-white fw-bold small">Junagadh, India</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="text-primary me-3 d-flex align-items-center justify-content-center" style="width: 32px;">
+                                            <span class="material-icons" style="font-size: 24px;">email</span>
+                                        </div>
+                                        <div class="border-start border-light border-opacity-10 ps-3 py-1">
+                                            <span class="d-block text-muted small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 1px;">Email</span>
+                                            <span id="email-val" class="text-white fw-bold small text-break">amulbabariya07@gmail.com</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <a href="resume/Odoo_Developer_Amul_Babariya.pdf" class="btn main-btn" download>
+                            <a href="resume/Odoo_Developer_Amul_Babariya.pdf" class="btn btn-primary px-4 py-3 rounded-3 shadow fw-bold text-uppercase" download>
                                 <span>Download My CV</span>
                             </a>
                         </div>
@@ -192,56 +217,51 @@
                 </div>
                 <!-- Personal Infos Ends -->
                 <!-- Resume Starts -->
-                <div class="w-100 resume">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12 pl-0">
-                                <h4 class="subtitle text-center">My resume</h4>
+                <div class="py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-12 text-center mb-5">
+                            <h4 class="text-uppercase fw-bold letter-spacing-1">My resume</h4>
+                        </div>
+                        <div class="col-lg-10">
+                            <div class="d-flex justify-content-center gap-3 mb-5">
+                                <button class="btn btn-outline-primary px-4 rounded-pill active" id="experience">Experience</button>
+                                <button class="btn btn-outline-primary px-4 rounded-pill" id="education">Education</button>
                             </div>
-                            <div class="resume-header">
-                                <p class="active" id="experience">experience</p>
-                                <p id="education">education</p>
+                            <!-- Experience Starts -->
+                            <div id="experiencecarousel" class="visiblecarousel">
+                                <!-- Dynamic Items -->
                             </div>
-                            <div class="col-12 resume-holder">
-                                <!-- Experience Starts -->
-                                <div id="experiencecarousel" class="owl-carousel owl-theme visiblecarousel">
-                                    <!-- Dynamic Items -->
-                                </div>
-                                <!-- Experience Ends -->
-                                <!-- Education Starts -->
-                                <div id="education-hierarchy" class="education-hierarchy hiddencarousel">
-                                    <!-- Dynamic Items -->
-                                </div>
-                                <!-- Education Ends -->
+                            <!-- Education Starts -->
+                            <div id="education-hierarchy" class="hiddencarousel">
+                                <!-- Dynamic Items -->
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Resume Ends -->
-                <div class="badges">
-                    <div class="container">
-                        <div class="row text-center">
-                            <!-- Fact Badge Item Starts -->
-                            <div class="col-12 col-md-4">
-                                <span class="material-icons">cases</span>
-                                <h3 id="stat-exp-val">2</h3>
-                                <p>Years Experience</p>
+
+                <!-- Fun Facts Starts -->
+                <div class="py-5">
+                    <div class="row g-4 text-center justify-content-center">
+                        <div class="col-12 col-md-4 col-xl-3">
+                            <div class="p-4 rounded-4 shadow-sm border border-light border-opacity-10 bg-white bg-opacity-5">
+                                <span class="material-icons text-primary display-5 mb-3">cases</span>
+                                <h3 id="stat-exp-val" class="fw-bold mb-1">2</h3>
+                                <p class="text-uppercase small fw-bold text-muted m-0">Years Experience</p>
                             </div>
-                            <!-- Fact Badge Item Ends -->
-                            <!-- Fact Badge Item Starts -->
-                            <div class="col-12 col-md-4">
-                                <span class="material-icons">thumb_up</span>
-                                <h3 id="stat-proj-val">15</h3>
-                                <p>done projects</p>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-3">
+                            <div class="p-4 rounded-4 shadow-sm border border-light border-opacity-10 bg-white bg-opacity-5">
+                                <span class="material-icons text-primary display-5 mb-3">thumb_up</span>
+                                <h3 id="stat-proj-val" class="fw-bold mb-1">15</h3>
+                                <p class="text-uppercase small fw-bold text-muted m-0">Projects Done</p>
                             </div>
-                            <!-- Fact Badge Item Ends -->
-                            <!-- Fact Badge Item Starts -->
-                            <div class="col-12 col-md-4">
-                                <span class="material-icons">favorite</span>
-                                <h3 id="stat-cust-val">10</h3>
-                                <p>happy customers</p>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-3">
+                            <div class="p-4 rounded-4 shadow-sm border border-light border-opacity-10 bg-white bg-opacity-5">
+                                <span class="material-icons text-primary display-5 mb-3">favorite</span>
+                                <h3 id="stat-cust-val" class="fw-bold mb-1">10</h3>
+                                <p class="text-uppercase small fw-bold text-muted m-0">Happy Customers</p>
                             </div>
-                            <!-- Fact Badge Item Ends -->
                         </div>
                     </div>
                 </div>
