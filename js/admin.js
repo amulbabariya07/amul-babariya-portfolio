@@ -515,11 +515,14 @@ document.addEventListener('DOMContentLoaded', function () {
             card.innerHTML = `
                 <div class="d-flex justify-content-between mb-2">
                     <span class="badge bg-light text-dark border">${date}</span>
-                    <select class="form-select form-select-sm w-auto border-0 bg-light" onchange="updateMsgStage('${key}', this.value)">
+                    <select class="form-select form-select-sm w-auto border-0 bg-light me-2" onchange="updateMsgStage('${key}', this.value)">
                         <option value="Draft" ${stage==='Draft'?'selected':''}>Draft</option>
                         <option value="Read" ${stage==='Read'?'selected':''}>Read</option>
                         <option value="Deal Done" ${stage==='Deal Done'?'selected':''}>Deal Done</option>
                     </select>
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteInquiry('${key}')">
+                        <i class="fa fa-trash"></i>
+                    </button>
                 </div>
                 <h6 class="fw-bold mb-1">${m.subject || "No Subject"}</h6>
                 <p class="text-muted small mb-1"><i class="fa fa-user me-1"></i> ${m.name}</p>
@@ -544,11 +547,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${m.subject || "N/A"}</td>
                 <td><span class="badge ${stage==='Draft'?'bg-warning':stage==='Read'?'bg-info':'bg-success'}">${stage}</span></td>
                 <td class="text-end pe-4">
-                    <select class="form-select form-select-sm d-inline-block w-auto" onchange="updateMsgStage('${key}', this.value)">
-                        <option value="Draft" ${stage==='Draft'?'selected':''}>Draft</option>
-                        <option value="Read" ${stage==='Read'?'selected':''}>Read</option>
-                        <option value="Deal Done" ${stage==='Deal Done'?'selected':''}>Deal Done</option>
-                    </select>
+                    <div class="d-flex align-items-center justify-content-end">
+                        <select class="form-select form-select-sm d-inline-block w-auto me-2" onchange="updateMsgStage('${key}', this.value)">
+                            <option value="Draft" ${stage==='Draft'?'selected':''}>Draft</option>
+                            <option value="Read" ${stage==='Read'?'selected':''}>Read</option>
+                            <option value="Deal Done" ${stage==='Deal Done'?'selected':''}>Deal Done</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteInquiry('${key}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             `;
             document.getElementById('messages-table-body').appendChild(tr);
@@ -587,6 +595,29 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Failed to update stage. Firebase Rules might be blocking it or your session expired.");
         }
     };
+
+    window.deleteInquiry = async (id) => {
+        if (!confirm('Are you sure you want to delete this message permanently?')) return;
+        
+        const idToken = localStorage.getItem('fb_id_token');
+        if(!idToken) return;
+        
+        try {
+            const url = `https://amul-portfolio-default-rtdb.firebaseio.com/messages/${id}.json?auth=${idToken}`;
+            const r = await fetch(url, { method: 'DELETE' });
+
+            if (r.ok) {
+                if(adminData.messages) delete adminData.messages[id];
+                renderMessages();
+            } else {
+                alert("Failed to delete from server.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error connecting to server.");
+        }
+    };
+
 
     window.updateSk = (i, f, v) => { adminData.skills[i][f] = v; markUnsaved(); };
     window.rmSk = (i) => { adminData.skills.splice(i, 1); markUnsaved(); renderEverything(); };
