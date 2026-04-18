@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const loadPortfolioData = async () => {
         try {
-            const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
+            // Added ?t= timestamp to prevent browser caching
+            const response = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json?t=' + new Date().getTime());
             if (!response.ok) throw new Error("Firebase fetch failed");
             const data = await response.json();
             console.log("Portfolio: Loaded LIVE from Firebase");
