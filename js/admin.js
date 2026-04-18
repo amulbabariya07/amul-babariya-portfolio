@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (section.id === viewId) {
                     section.classList.add('active');
                     if (currentSectionName) {
-                        // Clone the node and remove the badge/icons for a clean title
                         const tempDiv = link.cloneNode(true);
                         const badge = tempDiv.querySelector('.badge');
                         const icon = tempDiv.querySelector('i');
@@ -56,6 +55,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             });
+
+            // Close sidebar on mobile after click
+            const sidebarObj = document.getElementById('admin-sidebar');
+            if (window.innerWidth < 768 && sidebarObj.classList.contains('show')) {
+                const bsCollapse = bootstrap.Collapse.getInstance(sidebarObj) || new bootstrap.Collapse(sidebarObj);
+                bsCollapse.hide();
+            }
         });
     });
 
@@ -269,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
         kanbanList.innerHTML = '';
         adminData.portfolio.forEach((proj, index) => {
             const card = document.createElement('div');
-            card.className = 'col-6 col-md-4 col-lg-3 mb-4 d-flex';
+            card.className = 'col-12 col-md-4 col-lg-3 mb-4 d-flex';
             card.innerHTML = `
                 <div class="card w-100 border-0 shadow-sm rounded-4 overflow-hidden project-kanban-card" 
                      style="cursor: pointer; transition: transform 0.2s;" 
@@ -630,8 +636,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const init = async () => {
         // Check login session
         if (localStorage.getItem('admin_session') === 'active') {
+            const dashboard = document.getElementById('dashboard');
+            const mobileNav = document.getElementById('mobile-nav');
+            const adminSidebar = document.getElementById('admin-sidebar');
+            
             dashboard.style.display = 'block';
-            document.getElementById('admin-sidebar').style.display = 'flex';
+            if(mobileNav) {
+                mobileNav.style.setProperty('display', 'flex', 'important');
+            }
+            // Let Bootstrap handle sidebar display (d-md-block and collapse classes)
             loginContainerRoot.style.display = 'none';
             document.body.style.overflow = 'auto';
             loadFromFirebase();
