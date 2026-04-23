@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const experienceText = document.getElementById('experience-text');
     const phoneText = document.getElementById('phone-text');
     const addressText = document.getElementById('address-text');
+    const statExperience = document.getElementById('stat-experience');
     const statProjects = document.getElementById('stat-projects');
     const statCustomers = document.getElementById('stat-customers');
     const skillsList = document.getElementById('skills-list');
@@ -108,8 +109,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Stats
         if (adminData.stats) {
-            statProjects.value = adminData.stats.projects || '';
-            statCustomers.value = adminData.stats.customers || '';
+            if (statExperience) statExperience.value = adminData.stats.experience || '';
+            if (statProjects) statProjects.value = adminData.stats.projects || '';
+            if (statCustomers) statCustomers.value = adminData.stats.customers || '';
         }
 
         // Skills
@@ -742,14 +744,21 @@ document.addEventListener('DOMContentLoaded', function () {
         globalSaveBtn.onclick = async () => {
             if (!adminData) return;
 
-            // Capture all fields
-            adminData.profile.bio = bioEditor.innerHTML;
-            adminData.profile.birthdate = birthdateText.value;
-            adminData.profile.experience = experienceText.value;
-            adminData.profile.phone = phoneText.value;
-            adminData.profile.address = addressText.value;
-            adminData.stats.projects = statProjects.value;
-            adminData.stats.customers = statCustomers.value;
+            // Ensure objects exist
+            if (!adminData.profile) adminData.profile = {};
+            if (!adminData.stats) adminData.stats = {};
+
+            // Capture all fields from Profile
+            if (bioQuill) adminData.profile.bio = bioQuill.root.innerHTML;
+            if (birthdateText) adminData.profile.birthdate = birthdateText.value;
+            if (experienceText) adminData.profile.experience = experienceText.value;
+            if (phoneText) adminData.profile.phone = phoneText.value;
+            if (addressText) adminData.profile.address = addressText.value;
+            
+            // Capture Stats
+            if (statExperience) adminData.stats.experience = statExperience.value;
+            if (statProjects) adminData.stats.projects = statProjects.value;
+            if (statCustomers) adminData.stats.customers = statCustomers.value;
 
             try {
                 const idToken = localStorage.getItem('fb_id_token');
@@ -810,7 +819,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    [bioEditor, birthdateText, experienceText, phoneText, addressText, statProjects, statCustomers].forEach(el => {
+    [bioEditor, birthdateText, experienceText, phoneText, addressText, statExperience, statProjects, statCustomers].forEach(el => {
         if (el) el.oninput = () => markUnsaved();
     });
 
