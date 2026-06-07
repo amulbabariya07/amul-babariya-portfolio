@@ -766,6 +766,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (statCustomers) adminData.stats.customers = statCustomers.value;
 
             try {
+                console.log("Saving adminData:", adminData);
                 const idToken = localStorage.getItem('fb_id_token');
                 if (!idToken) {
                     showNotification("Error: You are not logged in! Please Logout and Login again.");
