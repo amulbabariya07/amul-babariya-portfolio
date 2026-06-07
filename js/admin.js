@@ -403,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const addProjBtn = document.getElementById('add-project-btn');
     if (addProjBtn) addProjBtn.onclick = () => {
+        if (!adminData) adminData = {};
         if (!adminData.portfolio) adminData.portfolio = [];
         const newIdx = adminData.portfolio.length;
         adminData.portfolio.push({ name: 'New Project', header_img: '', gallery_imgs: '', short_desc: '', details: '', tags: '' });
@@ -491,6 +492,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.rmLang = (i) => { adminData.languages.splice(i, 1); markUnsaved(); renderEverything(); };
     const addLangBtn = document.getElementById('add-lang-btn');
     if (addLangBtn) addLangBtn.onclick = () => {
+        if (!adminData) adminData = {};
         if (!adminData.languages) adminData.languages = [];
         adminData.languages.push({ name: 'New Language', level: 'Fluent' });
         markUnsaved(); renderEverything();
@@ -627,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.updateExp = (i, f, v) => { adminData.experience_list[i][f] = v; markUnsaved(); };
     window.rmExp = (i) => { adminData.experience_list.splice(i, 1); markUnsaved(); renderEverything(); };
     if (addExpBtn) addExpBtn.onclick = () => {
+        if (!adminData) adminData = {};
         if (!adminData.experience_list) adminData.experience_list = [];
         adminData.experience_list.push({title:'New Role', period:'2024 - Present', company:'Company Name', description:'Job description here...'});
         markUnsaved(); renderEverything();
@@ -635,11 +638,13 @@ document.addEventListener('DOMContentLoaded', function () {
     window.updateEdu = (i, f, v) => { adminData.education_list[i][f] = v; markUnsaved(); };
     window.rmEdu = (i) => { adminData.education_list.splice(i, 1); markUnsaved(); renderEverything(); };
     if (addEduBtn) addEduBtn.onclick = () => {
+        if (!adminData) adminData = {};
         if (!adminData.education_list) adminData.education_list = [];
         adminData.education_list.push({degree:'New Degree', period:'2024', institution:'University Name', description:'Description here...'});
         markUnsaved(); renderEverything();
     };
     if (addSkillBtn) addSkillBtn.onclick = () => { 
+        if (!adminData) adminData = {};
         if (!adminData.skills) adminData.skills = [];
         adminData.skills.push({name: 'New Skill', level: '80'}); 
         markUnsaved(); 
@@ -651,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const r = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
             if (r.ok) {
-                adminData = await r.json();
+                adminData = await r.json() || {};
                 if(syncFileBtn) syncFileBtn.style.display = 'none';
                 syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-wifi"></i> Live: Connected to Firebase</span>';
                 renderEverything();
