@@ -75,6 +75,45 @@ document.addEventListener('DOMContentLoaded', function () {
              .replace(/'/g, "&#039;");
     };
 
+    const resizeImage = (file) => {
+        return new Promise((resolve) => {
+            if (!file.type.match(/image.*/)) {
+                resolve(null);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_size = 1000;
+
+                    if (width > height) {
+                        if (width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        }
+                    } else {
+                        if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
     let adminData = null;
     let hasUnsavedChanges = false;
 
@@ -225,21 +264,83 @@ document.addEventListener('DOMContentLoaded', function () {
             const quill = new Quill(container, {
                 theme: 'snow',
                 modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        [{ 'font': [] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'script': 'sub'}, { 'script': 'super' }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        [{ 'align': [] }],
-                        ['blockquote', 'code-block'],
-                        ['link', 'image', 'video'],
-                        ['clean']
-                    ]
+                    toolbar: {
+                        container: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'script': 'sub'}, { 'script': 'super' }],
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean'],
+                            ['link', 'image', 'video']
+                        ],
+                        handlers: {
+                            image: function() {
+                                const input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
+                                input.click();
+                                input.onchange = async () => {
+                                    const file = input.files[0];
+                                    if (file) {
+                                        const base64 = await resizeImage(file);
+                                        if (base64) {
+                                            const range = this.quill.getSelection(true);
+                                            this.quill.insertEmbed(range.index, 'image', base64);
+                                            this.quill.setSelection(range.index + 1);
+                                        }
+                                    }
+                                };
+                            }
+                        }
+                    }
                 }
             });
+
+            // Handle Pasted images
+            quill.root.addEventListener('paste', async (e) => {
+                if (e.clipboardData && e.clipboardData.items) {
+                    for (let i = 0; i < e.clipboardData.items.length; i++) {
+                        const item = e.clipboardData.items[i];
+                        if (item.type.indexOf('image') === 0) {
+                            e.preventDefault();
+                            const file = item.getAsFile();
+                            const base64 = await resizeImage(file);
+                            if (base64) {
+                                const range = quill.getSelection(true);
+                                quill.insertEmbed(range.index, 'image', base64);
+                                quill.setSelection(range.index + 1);
+                            }
+                        }
+                    }
+                }
+            }, true);
+
+            // Handle drag and drop images
+            quill.root.addEventListener('drop', async (e) => {
+                if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+                    e.preventDefault();
+                    for (let i = 0; i < e.dataTransfer.files.length; i++) {
+                        const file = e.dataTransfer.files[i];
+                        if (file.type.indexOf('image') === 0) {
+                            const base64 = await resizeImage(file);
+                            if (base64) {
+                                const range = quill.getSelection(true) || { index: quill.getLength() };
+                                quill.insertEmbed(range.index, 'image', base64);
+                                quill.setSelection(range.index + 1);
+                            }
+                        }
+                    }
+                }
+            }, true);
+
             quill.root.innerHTML = initialHtml || '';
             // Only listen for changes AFTER the initial content is set to avoid false "unsaved" warnings
             setTimeout(() => {
@@ -424,41 +525,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const files = ev.target.files;
         if (!files.length) return;
         
-        const resizeImage = (file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        const max_size = 1000; // Max dimension
-
-                        if (width > height) {
-                            if (width > max_size) {
-                                height *= max_size / width;
-                                width = max_size;
-                            }
-                        } else {
-                            if (height > max_size) {
-                                width *= max_size / height;
-                                height = max_size;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compress as JPEG
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        };
-
         const promises = Array.from(files).map(file => resizeImage(file));
 
         Promise.all(promises).then(results => {
