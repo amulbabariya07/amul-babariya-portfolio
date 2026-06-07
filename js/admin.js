@@ -66,6 +66,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    const escapeHtml = (unsafe) => {
+        return (unsafe || '').toString()
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    };
+
     let adminData = null;
     let hasUnsavedChanges = false;
 
@@ -125,11 +134,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 border-0" onclick="rmSk(${index})"><i class="fa fa-trash"></i></button>
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Skill Name</label>
-                            <input type="text" class="form-control form-control-sm" value="${skill.name}" oninput="updateSk(${index}, 'name', this.value)">
+                            <input type="text" class="form-control form-control-sm" value="${escapeHtml(skill.name)}" oninput="updateSk(${index}, 'name', this.value)">
                         </div>
                         <div>
                             <label class="form-label small fw-bold text-muted">Level (%)</label>
-                            <input type="number" class="form-control form-control-sm" value="${skill.level}" oninput="updateSk(${index}, 'level', this.value)">
+                            <input type="number" class="form-control form-control-sm" value="${escapeHtml(skill.level)}" oninput="updateSk(${index}, 'level', this.value)">
                         </div>
                     </div>`;
                 skillsList.appendChild(col);
@@ -146,16 +155,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button class="btn btn-outline-danger position-absolute top-0 end-0 m-3 border-0" onclick="rmExp(${index})"><i class="fa fa-trash"></i></button>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Role / Title</label>
-                        <input type="text" class="form-control fw-bold" value="${exp.title}" oninput="updateExp(${index}, 'title', this.value)">
+                        <input type="text" class="form-control fw-bold" value="${escapeHtml(exp.title)}" oninput="updateExp(${index}, 'title', this.value)">
                     </div>
                     <div class="row g-3 mb-3 text-start">
                         <div class="col-6">
                             <label class="form-label small fw-bold text-muted">Period</label>
-                            <input type="text" class="form-control" value="${exp.period}" oninput="updateExp(${index}, 'period', this.value)">
+                            <input type="text" class="form-control" value="${escapeHtml(exp.period)}" oninput="updateExp(${index}, 'period', this.value)">
                         </div>
                         <div class="col-6">
                             <label class="form-label small fw-bold text-muted">Company</label>
-                            <input type="text" class="form-control" value="${exp.company}" oninput="updateExp(${index}, 'company', this.value)">
+                            <input type="text" class="form-control" value="${escapeHtml(exp.company)}" oninput="updateExp(${index}, 'company', this.value)">
                         </div>
                     </div>
                     <div>
@@ -180,16 +189,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button class="btn btn-outline-danger position-absolute top-0 end-0 m-3 border-0" onclick="rmEdu(${index})"><i class="fa fa-trash"></i></button>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Degree / Cert</label>
-                        <input type="text" class="form-control fw-bold" value="${edu.degree}" oninput="updateEdu(${index}, 'degree', this.value)">
+                        <input type="text" class="form-control fw-bold" value="${escapeHtml(edu.degree)}" oninput="updateEdu(${index}, 'degree', this.value)">
                     </div>
                     <div class="row g-3 mb-3 text-start">
                         <div class="col-6">
                             <label class="form-label small fw-bold text-muted">Period</label>
-                            <input type="text" class="form-control" value="${edu.period}" oninput="updateEdu(${index}, 'period', this.value)">
+                            <input type="text" class="form-control" value="${escapeHtml(edu.period)}" oninput="updateEdu(${index}, 'period', this.value)">
                         </div>
                         <div class="col-6">
                             <label class="form-label small fw-bold text-muted">Institution</label>
-                            <input type="text" class="form-control" value="${edu.institution}" oninput="updateEdu(${index}, 'institution', this.value)">
+                            <input type="text" class="form-control" value="${escapeHtml(edu.institution)}" oninput="updateEdu(${index}, 'institution', this.value)">
                         </div>
                     </div>
                     <div>
@@ -287,8 +296,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <div class="card-body p-3 d-flex flex-column" style="height: 70px; overflow: hidden;">
                         <div id="v-details" class="text-white-50 lh-lg" style="font-size: 17px; text-align: justify;"></div>
-                        <h6 class="fw-bold text-dark text-truncate mb-1" style="font-size: 13px;">${proj.name || 'Untitled'}</h6>
-                        <p class="text-muted small mb-0 text-truncate" style="font-size: 10px;">${proj.short_desc || 'No description'}</p>
+                        <h6 class="fw-bold text-dark text-truncate mb-1" style="font-size: 13px;">${escapeHtml(proj.name || 'Untitled')}</h6>
+                        <p class="text-muted small mb-0 text-truncate" style="font-size: 10px;">${escapeHtml(proj.short_desc || 'No description')}</p>
                     </div>
                 </div>`;
             kanbanList.appendChild(card);
@@ -313,18 +322,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-md-7">
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-muted text-uppercase">Project Name</label>
-                        <input type="text" class="form-control form-control-lg fw-bold" value="${proj.name || ''}" 
+                        <input type="text" class="form-control form-control-lg fw-bold" value="${escapeHtml(proj.name || '')}" 
                                oninput="updateProject(${index}, 'name', this.value); document.getElementById('form-title-area').innerText = this.value">
                     </div>
                     
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted text-uppercase">Short Description</label>
-                            <input type="text" class="form-control" value="${proj.short_desc || ''}" oninput="updateProject(${index}, 'short_desc', this.value)">
+                            <input type="text" class="form-control" value="${escapeHtml(proj.short_desc || '')}" oninput="updateProject(${index}, 'short_desc', this.value)">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted text-uppercase">Tags (Comma separated)</label>
-                            <input type="text" class="form-control" value="${proj.tags || ''}" oninput="updateProject(${index}, 'tags', this.value)">
+                            <input type="text" class="form-control" value="${escapeHtml(proj.tags || '')}" oninput="updateProject(${index}, 'tags', this.value)">
                         </div>
                     </div>
 
@@ -477,11 +486,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 border-0" onclick="rmLang(${index})"><i class="fa fa-trash"></i></button>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Language</label>
-                        <input type="text" class="form-control" value="${lang.name}" oninput="updateLang(${index}, 'name', this.value)">
+                        <input type="text" class="form-control" value="${escapeHtml(lang.name)}" oninput="updateLang(${index}, 'name', this.value)">
                     </div>
                     <div>
                         <label class="form-label small fw-bold text-muted">Level (e.g. Fluent, Native)</label>
-                        <input type="text" class="form-control" value="${lang.level}" oninput="updateLang(${index}, 'level', this.value)">
+                        <input type="text" class="form-control" value="${escapeHtml(lang.level)}" oninput="updateLang(${index}, 'level', this.value)">
                     </div>
                 </div>`;
             langList.appendChild(col);
@@ -654,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Firebase Sync Logic ---
     const loadFromFirebase = async () => {
         try {
-            const r = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json');
+            const r = await fetch('https://amul-portfolio-default-rtdb.firebaseio.com/.json?t=' + new Date().getTime());
             if (r.ok) {
                 adminData = await r.json() || {};
                 if(syncFileBtn) syncFileBtn.style.display = 'none';
