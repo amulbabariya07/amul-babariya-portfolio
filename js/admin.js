@@ -756,39 +756,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (globalSaveBtn) {
         globalSaveBtn.onclick = async () => {
-            if (!adminData) return;
-
-            console.log("------------------------------------");
-            console.log("Step 1: Save process started...");
-
-            // Change button state
-            const originalBtnHTML = globalSaveBtn.innerHTML;
-            globalSaveBtn.disabled = true;
-            globalSaveBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Saving...';
-
-            // Ensure objects exist
-            if (!adminData.profile) adminData.profile = {};
-            if (!adminData.stats) adminData.stats = {};
-
-            // Capture all fields from Profile
-            if (bioQuill) adminData.profile.bio = bioQuill.root.innerHTML;
-            if (birthdateText) adminData.profile.birthdate = birthdateText.value;
-            if (experienceText) adminData.profile.experience = experienceText.value;
-            if (phoneText) adminData.profile.phone = phoneText.value;
-            if (addressText) adminData.profile.address = addressText.value;
-            
-            // Capture Stats
-            if (statExperience) adminData.stats.experience = statExperience.value;
-            if (statProjects) adminData.stats.projects = statProjects.value;
-            if (statCustomers) adminData.stats.customers = statCustomers.value;
-
             try {
-                console.log("Step 2: Profile and Stats data captured from form fields.");
-                console.log("Current adminData before stringify:", adminData);
+                if (!adminData) {
+                    alert("System is still loading data from Firebase. Please try again in a few seconds.");
+                    return;
+                }
+
+                console.log("------------------------------------");
+                console.log("Step 1: Save process started...");
+                showNotification("Step 1: Preparing to save...");
+
+                // Change button state
+                const originalBtnHTML = globalSaveBtn.innerHTML;
+                globalSaveBtn.disabled = true;
+                globalSaveBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Saving...';
+
+                // Ensure objects exist
+                if (!adminData.profile) adminData.profile = {};
+                if (!adminData.stats) adminData.stats = {};
+
+                // Capture all fields from Profile
+                if (bioQuill) adminData.profile.bio = bioQuill.root.innerHTML;
+                if (birthdateText) adminData.profile.birthdate = birthdateText.value;
+                if (experienceText) adminData.profile.experience = experienceText.value;
+                if (phoneText) adminData.profile.phone = phoneText.value;
+                if (addressText) adminData.profile.address = addressText.value;
+                
+                // Capture Stats
+                if (statExperience) adminData.stats.experience = statExperience.value;
+                if (statProjects) adminData.stats.projects = statProjects.value;
+                if (statCustomers) adminData.stats.customers = statCustomers.value;
+
+                console.log("Step 2: Data captured. Stringifying...");
+                
+                let payload;
+                try {
+                    payload = JSON.stringify(adminData);
+                } catch (stringifyError) {
+                    alert("FATAL ERROR during JSON.stringify: " + stringifyError.message);
+                    throw stringifyError;
+                }
+
+                const sizeKB = (payload.length / 1024).toFixed(2);
+                console.log(`Payload size: ${sizeKB} KB`);
+                showNotification(`Step 2: Uploading ${sizeKB} KB to Firebase...`);
                 
                 const idToken = localStorage.getItem('fb_id_token');
                 if (!idToken) {
-                    showNotification("Error: You are not logged in! Please Logout and Login again.");
+                    alert("Error: You are not logged in! Please Logout and Login again.");
                     globalSaveBtn.disabled = false;
                     globalSaveBtn.innerHTML = originalBtnHTML;
                     return;
@@ -796,18 +811,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 const url = `https://amul-portfolio-default-rtdb.firebaseio.com/.json?auth=${idToken}`;
                 
-                console.log("Step 3: Converting adminData to JSON string...");
-                const payload = JSON.stringify(adminData);
-                console.log(`Payload size: ${(payload.length / 1024).toFixed(2)} KB`);
-
-                console.log("Step 4: Sending PUT request to Firebase RTDB...");
+                console.log("Step 3: Sending PUT request to Firebase RTDB...");
                 const r = await fetch(url, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: payload
                 });
 
-                console.log("Step 5: Received response from Firebase. Status:", r.status);
+                console.log("Step 4: Received response. Status:", r.status);
 
                 if (r.status === 401) {
                     throw new Error("Unauthorized: Your session has expired. Please Logout and Login again.");
@@ -819,25 +830,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 try {
                     localStorage.setItem('portfolio_data_cache', payload);
-                    console.log("Step 6: Data successfully backed up to LocalStorage.");
                 } catch (e) {
-                    console.warn("Step 6 Warning: Local storage quota exceeded. Changes saved to Firebase but not cached locally.", e);
+                    console.warn("Step 5 Warning: Local storage quota exceeded.", e);
                 }
                 
                 hasUnsavedChanges = false;
                 syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-save"></i> Firebase Updated!</span>';
                 
-                console.log("Step 7: SAVE COMPLETE! 🚀");
-                console.log("------------------------------------");
-                
-                showNotification("Success: Data saved LIVE to Firebase! 🚀");
-            } catch(e) {
-                console.error("Save failed at some step:", e);
-                showNotification(e.message || "Permission Denied: Could not write to Firebase.");
-            } finally {
-                // Restore button state
+                console.log("Step 6: SAVE COMPLETE! 🚀");
+                showNotification(`✅ Success! ${sizeKB} KB saved to Firebase!`);
+
                 globalSaveBtn.disabled = false;
                 globalSaveBtn.innerHTML = originalBtnHTML;
+
+            } catch(e) {
+                console.error("Save failed at some step:", e);
+                alert("Save Failed! Error: " + e.message);
+                if (globalSaveBtn) {
+                    globalSaveBtn.disabled = false;
+                    globalSaveBtn.innerHTML = '<i class="fa fa-save me-2"></i> Save';
+                }
             }
         };
     }
