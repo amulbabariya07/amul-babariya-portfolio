@@ -758,6 +758,14 @@ document.addEventListener('DOMContentLoaded', function () {
         globalSaveBtn.onclick = async () => {
             if (!adminData) return;
 
+            console.log("------------------------------------");
+            console.log("Step 1: Save process started...");
+
+            // Change button state
+            const originalBtnHTML = globalSaveBtn.innerHTML;
+            globalSaveBtn.disabled = true;
+            globalSaveBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Saving...';
+
             // Ensure objects exist
             if (!adminData.profile) adminData.profile = {};
             if (!adminData.stats) adminData.stats = {};
@@ -775,20 +783,31 @@ document.addEventListener('DOMContentLoaded', function () {
             if (statCustomers) adminData.stats.customers = statCustomers.value;
 
             try {
-                console.log("Saving adminData:", adminData);
+                console.log("Step 2: Profile and Stats data captured from form fields.");
+                console.log("Current adminData before stringify:", adminData);
+                
                 const idToken = localStorage.getItem('fb_id_token');
                 if (!idToken) {
                     showNotification("Error: You are not logged in! Please Logout and Login again.");
+                    globalSaveBtn.disabled = false;
+                    globalSaveBtn.innerHTML = originalBtnHTML;
                     return;
                 }
                 
                 const url = `https://amul-portfolio-default-rtdb.firebaseio.com/.json?auth=${idToken}`;
                 
+                console.log("Step 3: Converting adminData to JSON string...");
+                const payload = JSON.stringify(adminData);
+                console.log(`Payload size: ${(payload.length / 1024).toFixed(2)} KB`);
+
+                console.log("Step 4: Sending PUT request to Firebase RTDB...");
                 const r = await fetch(url, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(adminData)
+                    body: payload
                 });
+
+                console.log("Step 5: Received response from Firebase. Status:", r.status);
 
                 if (r.status === 401) {
                     throw new Error("Unauthorized: Your session has expired. Please Logout and Login again.");
@@ -799,16 +818,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 try {
-                    localStorage.setItem('portfolio_data_cache', JSON.stringify(adminData));
+                    localStorage.setItem('portfolio_data_cache', payload);
+                    console.log("Step 6: Data successfully backed up to LocalStorage.");
                 } catch (e) {
-                    console.warn("Local storage quota exceeded. Changes saved to Firebase but not cached locally.", e);
+                    console.warn("Step 6 Warning: Local storage quota exceeded. Changes saved to Firebase but not cached locally.", e);
                 }
+                
                 hasUnsavedChanges = false;
                 syncTextStatus.innerHTML = '<span style="color: #3fd38c"><i class="fa fa-save"></i> Firebase Updated!</span>';
+                
+                console.log("Step 7: SAVE COMPLETE! 🚀");
+                console.log("------------------------------------");
+                
                 showNotification("Success: Data saved LIVE to Firebase! 🚀");
             } catch(e) {
-                console.error("Save failed:", e);
+                console.error("Save failed at some step:", e);
                 showNotification(e.message || "Permission Denied: Could not write to Firebase.");
+            } finally {
+                // Restore button state
+                globalSaveBtn.disabled = false;
+                globalSaveBtn.innerHTML = originalBtnHTML;
             }
         };
     }
